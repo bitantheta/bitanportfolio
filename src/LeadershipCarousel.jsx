@@ -1,0 +1,187 @@
+import { useEffect, useRef, useCallback } from "react";
+
+export default function LeadershipCarousel() {
+  const containerRef = useRef(null);
+  const animRef = useRef(null);
+  const pausedRef = useRef(false);
+  const CARD_WIDTH = 240;
+  const SPEED = 1.0; // px per frame — moves left (cards slide right)
+
+  const data = [
+    {
+      image: "/leadership/dps-vice-head-boy.png",
+      role: "Vice Head Boy",
+      org: "DPS Ruby Park",
+      year: "Class XI",
+    },
+    {
+      image: "/leadership/dps-house-captain.png",
+      role: "House Captain",
+      org: "DPS Ruby Park",
+      year: "Class XII",
+    },
+    {
+      image: "/leadership/jumun-24-oc-finance.png",
+      role: "OC Finance",
+      org: "JUMUN",
+      year: "2024",
+    },
+    {
+      image: "/leadership/voxpop-24-director-finance.png",
+      role: "Director (Finance)",
+      org: "VOXPOP",
+      year: "2024",
+    },
+    {
+      image: "/leadership/intramun-24-finance-officer.png",
+      role: "Finance Officer",
+      org: "INTRAMUN",
+      year: "2024",
+    },
+    {
+      image: "/leadership/jumun-25-charge-affairs.png",
+      role: "Chargé d’Affaires",
+      org: "JUMUN",
+      year: "2025",
+    },
+    {
+      image: "/leadership/voxpop-25-treasurer.png",
+      role: "Treasurer",
+      org: "VOXPOP",
+      year: "2025",
+    },
+  ];
+
+  const items = [...data, ...data, ...data];
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    containerRef.current.scrollLeft = data.length * CARD_WIDTH;
+  }, []);
+
+  // Continuous auto-scroll (moves left → cards slide right-to-left visually)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const tick = () => {
+      if (!pausedRef.current && el) {
+        el.scrollLeft -= SPEED;
+        // Loop: when scrolled past the beginning, jump to 2nd copy
+        if (el.scrollLeft <= 0) {
+          el.scrollLeft = data.length * CARD_WIDTH;
+        }
+      }
+      animRef.current = requestAnimationFrame(tick);
+    };
+    animRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animRef.current);
+  }, []);
+
+  const onEnter = useCallback(() => { pausedRef.current = true; }, []);
+  const onLeave = useCallback(() => { pausedRef.current = false; }, []);
+
+  const scroll = (dir) => {
+    if (!containerRef.current) return;
+
+    containerRef.current.scrollBy({
+      left: dir * CARD_WIDTH,
+      behavior: "smooth",
+    });
+
+    setTimeout(() => {
+      const max = data.length * CARD_WIDTH * 2;
+      if (containerRef.current.scrollLeft <= CARD_WIDTH) {
+        containerRef.current.scrollLeft = data.length * CARD_WIDTH;
+      }
+      if (containerRef.current.scrollLeft >= max) {
+        containerRef.current.scrollLeft = data.length * CARD_WIDTH;
+      }
+    }, 400);
+  };
+
+  return (
+    <div className="relative">
+
+      {/* LEFT ARROW */}
+      <button
+        onClick={() => scroll(-1)}
+        className="
+          absolute left-0 md:-left-5 top-1/2 -translate-y-1/2 z-10
+          bg-black/70 hover:bg-black/90
+          border border-white/10
+          p-2 md:p-3 rounded-full backdrop-blur
+        "
+      >
+        ‹
+      </button>
+
+      {/* RIGHT ARROW */}
+      <button
+        onClick={() => scroll(1)}
+        className="
+          absolute right-0 md:-right-5 top-1/2 -translate-y-1/2 z-10
+          bg-black/70 hover:bg-black/90
+          border border-white/10
+          p-2 md:p-3 rounded-full backdrop-blur
+        "
+      >
+        ›
+      </button>
+
+      {/* SCROLLER */}
+      <div
+        ref={containerRef}
+        className="overflow-x-hidden"
+        onMouseEnter={onEnter}
+        onMouseLeave={onLeave}
+        onTouchStart={onEnter}
+        onTouchEnd={onLeave}
+      >
+        <div className="flex gap-6">
+
+          {items.map((item, i) => (
+            <div
+              key={i}
+              className="
+                w-[220px] h-[250px]
+                flex-shrink-0
+                rounded-2xl
+                bg-gradient-to-br from-[#0f1b34] to-[#0b1220]
+                border border-white/10
+                shadow-[0_20px_40px_rgba(0,0,0,0.5)]
+                p-5
+                flex flex-col
+                hover:-translate-y-1 hover:border-white/30
+                transition-all duration-300
+              "
+            >
+              {/* IMAGE */}
+              <div className="h-28 flex items-center justify-center mb-4">
+                <img
+                  src={item.image}
+                  alt={item.role}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+
+              {/* TEXT */}
+              <div className="text-center mt-auto">
+                <div className="text-sm font-semibold text-white">
+                  {item.role}
+                </div>
+                <div className="text-xs text-white/60 mt-1">
+                  {item.org}
+                </div>
+                <div className="text-xs text-white/40 mt-1">
+                  {item.year}
+                </div>
+              </div>
+            </div>
+          ))}
+
+        </div>
+      </div>
+    </div>
+  );
+}
