@@ -9,43 +9,43 @@ export default function LeadershipCarousel() {
 
   const data = [
     {
-      image: "/leadership/dps-vice-head-boy.png",
+      image: `${import.meta.env.BASE_URL}leadership/dps-vice-head-boy.png`,
       role: "Vice Head Boy",
       org: "DPS Ruby Park",
       year: "Class XI",
     },
     {
-      image: "/leadership/dps-house-captain.png",
+      image: `${import.meta.env.BASE_URL}leadership/dps-house-captain.png`,
       role: "House Captain",
       org: "DPS Ruby Park",
       year: "Class XII",
     },
     {
-      image: "/leadership/jumun-24-oc-finance.png",
+      image: `${import.meta.env.BASE_URL}leadership/jumun-24-oc-finance.png`,
       role: "OC Finance",
       org: "JUMUN",
       year: "2024",
     },
     {
-      image: "/leadership/voxpop-24-director-finance.png",
+      image: `${import.meta.env.BASE_URL}leadership/voxpop-24-director-finance.png`,
       role: "Director (Finance)",
       org: "VOXPOP",
       year: "2024",
     },
     {
-      image: "/leadership/intramun-24-finance-officer.png",
+      image: `${import.meta.env.BASE_URL}leadership/intramun-24-finance-officer.png`,
       role: "Finance Officer",
       org: "INTRAMUN",
       year: "2024",
     },
     {
-      image: "/leadership/jumun-25-charge-affairs.png",
+      image: `${import.meta.env.BASE_URL}leadership/jumun-25-charge-affairs.png`,
       role: "Chargé d’Affaires",
       org: "JUMUN",
       year: "2025",
     },
     {
-      image: "/leadership/voxpop-25-treasurer.png",
+      image: `${import.meta.env.BASE_URL}leadership/voxpop-25-treasurer.png`,
       role: "Treasurer",
       org: "VOXPOP",
       year: "2025",

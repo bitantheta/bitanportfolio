@@ -9,6 +9,7 @@ import solarDashboardImage from "./assets/solar-dashboard.png";
 import izmirLogo from "./assets/izmir.png";
 import iiscLogo from "./assets/iisc.png";
 import iimLogo from "./assets/iim.png";
+import bmLogo from "./assets/bmlogo.png";
 import { Project01 } from "./project01";
 import {Project03}  from "./project03";
 import CertificationsCarousel from "./CertificationsCarousel";
@@ -69,54 +70,59 @@ const specificEnergy = thermalActive ? 82.9 : 78.5;
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("hero");
   const [roleIndex, setRoleIndex] = useState(0);
+  const [showSplash, setShowSplash] = useState(true);
+  const splashRef = useRef(null);
 
-  const roles = ["Process Engineer", "ML Researcher", "CFD Enthusiast", "Data-Driven Thinker"];
+  const roles = ["Process Modelling", "System Simulation", "CFD Analysis", "Reactor Modelling", "Feature Engineering", "Flow Simulation"];
 
   const project2Ref = useRef(null);
   const pipelineCardsRef = useRef([]);
   const selectedDesignRef = useRef(null);
+  const skillCardsRef = useRef([]);
+  const [activeStepIndex, setActiveStepIndex] = useState(-1);
+  const [activeSkillIndex, setActiveSkillIndex] = useState(-1);
 
   const certifications = [
   {
     title: "Machine Learning Specialization",
     issuer: "Stanford Online",
     date: "Mar 2025",
-    image: "/certificates/ml-specialization.png",
+    image: `${import.meta.env.BASE_URL}certificates/ml-specialization.png`,
     link: "https://coursera.org/verify/F6XLC63PI9XH",
   },
   {
     title: "Unsupervised Learning, Recommenders, RL",
     issuer: "Stanford Online",
     date: "Mar 2025",
-    image: "/certificates/unsupervised-rl.png",
+    image: `${import.meta.env.BASE_URL}certificates/unsupervised-rl.png`,
     link: "https://coursera.org/verify/M4G9BP49QCPC",
   },
   {
     title: "Advanced Learning Algorithms",
     issuer: "Stanford Online",
     date: "Dec 2024",
-    image: "/certificates/advanced-algos.png",
+    image: `${import.meta.env.BASE_URL}certificates/advanced-algos.png`,
     link: "https://coursera.org/verify/DTZTW27XI5RX",
   },
   {
     title: "Introduction to Graph Algorithms",
     issuer: "IISc Bangalore",
     date: "Oct 2024",
-    image: "/certificates/graph-algos.png",
+    image: `${import.meta.env.BASE_URL}certificates/graph-algos.png`,
     link: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL24CS70S33920025502651252",
   },
   {
     title: "Introduction to Machine Learning",
     issuer: "IIT Kharagpur",
     date: "Oct 2024",
-    image: "/certificates/iit-ml.png",
+    image: `${import.meta.env.BASE_URL}certificates/iit-ml.png`,
     link: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL24CS81S43920053802651252",
   },
   {
     title: "Python for Data Science",
     issuer: "IIT Madras",
     date: "Oct 2024",
-    image: "/certificates/python-ds.png",
+    image: `${import.meta.env.BASE_URL}certificates/python-ds.png`,
     link: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL24CS68S13920012202651252",
   },
 ];
@@ -210,6 +216,20 @@ useEffect(() => {
     setRoleIndex((prev) => (prev + 1) % roles.length);
   }, 2500);
   return () => clearInterval(timer);
+}, []);
+
+// Splash screen animation
+useEffect(() => {
+  if (!splashRef.current) return;
+  
+  // Logo is already visible, just hold then smoothly fade out
+  gsap.to(splashRef.current, {
+    opacity: 0,
+    duration: 1,
+    delay: 1.5,
+    ease: "power2.inOut",
+    onComplete: () => setShowSplash(false)
+  });
 }, []);
 
 
@@ -402,18 +422,39 @@ useEffect(() => {
   });
 
   // ===============================
-  // SKILLS — Y-ONLY REVEAL (no opacity)
+  // SKILLS — CSS-only (no GSAP to avoid visibility bugs)
   // ===============================
-  if (skillsRef.current) {
-    gsap.from(skillsRef.current.children, {
-      y: 30,
-      stagger: 0.1,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: skillsRef.current,
-        start: "top 85%",
-      },
+  // Cards and chips use CSS transitions only — always visible, glow on hover/scroll
+
+  // ===============================
+  // MOBILE SCROLL GLOW — Skills Cards
+  // ===============================
+  if (typeof window !== "undefined" && window.innerWidth < 768) {
+    const skillCards = document.querySelectorAll("[data-skill-card]");
+    skillCards.forEach((card, idx) => {
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top 70%",
+        end: "bottom 30%",
+        onEnter: () => card.classList.add("mobile-glow-active"),
+        onLeave: () => card.classList.remove("mobile-glow-active"),
+        onEnterBack: () => card.classList.add("mobile-glow-active"),
+        onLeaveBack: () => card.classList.remove("mobile-glow-active"),
+      });
+    });
+
+    // Pipeline cards (Project 2)
+    pipelineCardsRef.current.forEach((card, idx) => {
+      if (!card) return;
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top 65%",
+        end: "bottom 35%",
+        onEnter: () => card.classList.add("pipeline-glow-active"),
+        onLeave: () => card.classList.remove("pipeline-glow-active"),
+        onEnterBack: () => card.classList.add("pipeline-glow-active"),
+        onLeaveBack: () => card.classList.remove("pipeline-glow-active"),
+      });
     });
   }
 
@@ -500,7 +541,7 @@ useEffect(() => {
 // SCROLL PROGRESS + ACTIVE SECTION
 // ===============================
 useEffect(() => {
-  const sections = ["hero", "skills", "experience", "projects", "publications"];
+  const sections = ["hero", "about", "skills", "experience", "projects", "publications"];
 
   const onScroll = () => {
     const scrollTop = window.scrollY;
@@ -530,6 +571,20 @@ useEffect(() => {
 
    return (
     <div className="bg-[#f6f7f9]">
+
+    {/* ========== SPLASH SCREEN ========== */}
+    {showSplash && (
+      <div
+        ref={splashRef}
+        className="fixed inset-0 z-[10000] bg-black flex items-center justify-center"
+      >
+        <img
+          src={bmLogo}
+          alt="Logo"
+          className="splash-logo w-64 h-64 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] object-contain"
+        />
+      </div>
+    )}
 
     {/* ========== SCROLL PROGRESS BAR ========== */}
     <div className="fixed top-0 left-0 w-full h-[2px] z-[9998]">
@@ -610,7 +665,7 @@ useEffect(() => {
           </svg>
         </a>
         <a
-          href="mailto:bitanmukherjee@example.com"
+          href="mailto:bitanmukherjee3741@gmail.com"
           className="text-white/40 hover:text-white transition-colors duration-300"
           aria-label="Email"
         >
@@ -663,7 +718,6 @@ useEffect(() => {
 
     {/* Scroll indicator — bottom center */}
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-      <span className="text-[9px] font-mono tracking-[0.3em] uppercase text-white/30">Scroll</span>
       <div className="w-[1px] h-8 bg-gradient-to-b from-white/25 to-transparent animate-pulse" />
     </div>
   </div>
@@ -715,8 +769,8 @@ useEffect(() => {
   <div className="absolute bottom-[6vh] left-0 w-full px-6 md:px-10 hidden md:block">
 
     {/* Mono label */}
-    <p className="font-mono text-[10px] tracking-[0.4em] uppercase text-white/20 mb-4">
-      Chemical Engineering · ML Research
+    <p className="font-mono text-sm md:text-base tracking-[0.4em] uppercase text-white/80 mb-4">
+      Hi, I am
     </p>
 
     <h1
@@ -741,80 +795,8 @@ useEffect(() => {
 </section>
 
 
-{/* ================= SKILLS (right after hero) ================= */}
-<section id="skills" className="py-16 md:py-24 bg-black text-white">
-  <div className="max-w-6xl mx-auto px-5 md:px-8">
-
-    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/40 mb-4">
-      What I work with
-    </p>
-    <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-10 md:mb-14 text-white">
-      Skills &amp; Tools
-    </h2>
-
-    <div
-      ref={skillsRef}
-      className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5"
-    >
-      {/* MODELING & SIMULATION */}
-      <div className="rounded-2xl border border-white/15 bg-[#161618] p-6 md:p-7 hover:border-blue-500/40 transition-all duration-300">
-        <div className="w-9 h-9 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
-          <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-          </svg>
-        </div>
-        <h3 className="text-base font-semibold mb-2 text-white">Modeling &amp; Simulation</h3>
-        <p className="text-sm text-white/60 mb-4 leading-relaxed">
-          Physics-based system modeling across fluid, thermal, and reactive domains.
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {["Fluid Flow", "Heat Transfer", "Reaction Kinetics", "Transport Phenomena", "CFD"].map(s => (
-            <span key={s} className="px-2.5 py-1 text-[11px] rounded-full bg-white/10 text-white/70 border border-white/15">{s}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* MACHINE LEARNING */}
-      <div className="rounded-2xl border border-white/15 bg-[#161618] p-6 md:p-7 hover:border-purple-500/40 transition-all duration-300">
-        <div className="w-9 h-9 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
-          <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-          </svg>
-        </div>
-        <h3 className="text-base font-semibold mb-2 text-white">Machine Learning</h3>
-        <p className="text-sm text-white/60 mb-4 leading-relaxed">
-          Physics-constrained neural networks, forecasting, and optimization.
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {["PINNs", "LSTM", "Constrained Learning", "GNNs", "Optimization"].map(s => (
-            <span key={s} className="px-2.5 py-1 text-[11px] rounded-full bg-white/10 text-white/70 border border-white/15">{s}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* TOOLS & LANGUAGES */}
-      <div className="rounded-2xl border border-white/15 bg-[#161618] p-6 md:p-7 hover:border-green-500/40 transition-all duration-300">
-        <div className="w-9 h-9 rounded-lg bg-green-500/20 flex items-center justify-center mb-4">
-          <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
-          </svg>
-        </div>
-        <h3 className="text-base font-semibold mb-2 text-white">Tools &amp; Languages</h3>
-        <p className="text-sm text-white/60 mb-4 leading-relaxed">
-          End-to-end implementation from prototyping to deployment.
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {["Python", "MATLAB", "OpenFOAM", "C/C++", "Git", "Linux"].map(s => (
-            <span key={s} className="px-2.5 py-1 text-[11px] rounded-full bg-white/10 text-white/70 border border-white/15">{s}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section className="py-12 md:py-20 bg-[#f6f7f9]">
+{/* ================= ABOUT ME (right after hero) ================= */}
+<section id="about" className="py-12 md:py-20 bg-[#f6f7f9]">
   <div className="max-w-7xl mx-auto px-5 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
 
     {/* LEFT — TEXT + CARDS (VERTICALLY CENTERED) */}
@@ -989,6 +971,94 @@ I am still learning and trying to create social impact.
 </section>
 
 
+{/* ================= SKILLS ================= */}
+<section id="skills" className="relative py-20 md:py-28 overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #0d1117 40%, #101820 100%)' }}>
+
+  {/* Subtle grid pattern overlay */}
+  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+
+  <div className="relative max-w-[90%] xl:max-w-7xl mx-auto px-5 md:px-8">
+
+    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-blue-400/60 mb-4">
+      What I work with
+    </p>
+    <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">
+      Skills &amp; Tools
+    </h2>
+    <p className="text-sm md:text-base text-white/35 font-light mb-12 md:mb-16 max-w-lg">
+      From physics-based modeling to machine learning — the toolkit I use to solve real-world problems.
+    </p>
+
+    <div
+      ref={skillsRef}
+      className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6"
+    >
+      {/* MODELING & SIMULATION */}
+      <div data-skill-card data-skill-color="blue" className="group relative rounded-2xl border border-white/10 bg-[#12141a] p-7 md:p-8 hover:border-blue-500/60 hover:bg-[#161a24] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] [&.mobile-glow-active]:border-blue-500/60 [&.mobile-glow-active]:bg-[#161a24] [&.mobile-glow-active]:shadow-[0_0_40px_rgba(59,130,246,0.2)]">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="relative">
+          <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center mb-5 group-hover:bg-blue-500/30 group-hover:scale-105 transition-all duration-300">
+            <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold mb-2 text-white">Modeling &amp; Simulation</h3>
+          <p className="text-sm text-white/50 mb-5 leading-relaxed">
+            Physics-based system modeling across fluid, thermal, and reactive domains.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {["Fluid Flow", "Heat Transfer", "Reaction Kinetics", "Transport Phenomena", "CFD"].map(s => (
+              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25 hover:bg-blue-500/30 hover:border-blue-400/50 transition-all duration-200 cursor-default">{s}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* MACHINE LEARNING */}
+      <div data-skill-card data-skill-color="purple" className="group relative rounded-2xl border border-white/10 bg-[#12141a] p-7 md:p-8 hover:border-purple-500/60 hover:bg-[#161a24] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(147,51,234,0.2)] [&.mobile-glow-active]:border-purple-500/60 [&.mobile-glow-active]:bg-[#161a24] [&.mobile-glow-active]:shadow-[0_0_40px_rgba(147,51,234,0.2)]">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="relative">
+          <div className="w-11 h-11 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-5 group-hover:bg-purple-500/30 group-hover:scale-105 transition-all duration-300">
+            <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold mb-2 text-white">Machine Learning</h3>
+          <p className="text-sm text-white/50 mb-5 leading-relaxed">
+            Physics-constrained neural networks, forecasting, and optimization.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {["PINNs", "LSTM", "Constrained Learning", "GNNs", "Optimization"].map(s => (
+              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25 hover:bg-purple-500/30 hover:border-purple-400/50 transition-all duration-200 cursor-default">{s}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* TOOLS & LANGUAGES */}
+      <div data-skill-card data-skill-color="emerald" className="group relative rounded-2xl border border-white/10 bg-[#12141a] p-7 md:p-8 hover:border-emerald-500/60 hover:bg-[#161a24] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(16,185,129,0.2)] [&.mobile-glow-active]:border-emerald-500/60 [&.mobile-glow-active]:bg-[#161a24] [&.mobile-glow-active]:shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="relative">
+          <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mb-5 group-hover:bg-emerald-500/30 group-hover:scale-105 transition-all duration-300">
+            <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold mb-2 text-white">Tools &amp; Languages</h3>
+          <p className="text-sm text-white/50 mb-5 leading-relaxed">
+            End-to-end implementation from prototyping to deployment.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {["Python", "MATLAB", "OpenFOAM", "C/C++", "Git", "Linux"].map(s => (
+              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 hover:bg-emerald-500/30 hover:border-emerald-400/50 transition-all duration-200 cursor-default">{s}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 {/* ================= EXPERIENCE ================= */}
 <section
@@ -1012,73 +1082,69 @@ I am still learning and trying to create social impact.
     <div className="flex flex-col space-y-10 md:space-y-16">
 
       {/* ================= IZTECH ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
+      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
-        {/* DATE */}
-        <div className="md:col-span-3">
-          <div className="text-3xl md:text-5xl font-bold leading-none">2025-26</div>
-          <div className="mt-1 md:mt-2 text-xs md:text-sm text-white/30 uppercase tracking-[0.2em] font-light">
-            March - Present
-          </div>
-        </div>
-
-        {/* CONTENT */}
-        <div className="md:col-span-9">
-
-          <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
-            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-              <img
-                src={izmirLogo}
-                alt="Izmir Institute of Technology logo"
-                className="w-12 h-12 md:w-20 md:h-20 object-contain"
-              />
-            </div>
-
-            <div>
-              <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
-                 Research Assistant
-              </h3>
-              <p className="text-sm md:text-lg text-white/70 mt-1">
-                Izmir Institute of Technology, Türkiye
-              </p>
+          {/* DATE */}
+          <div className="md:col-span-3">
+            <div className="text-3xl md:text-5xl font-bold leading-none">2025-26</div>
+            <div className="mt-1 md:mt-2 text-sm md:text-base text-white/50 uppercase tracking-[0.2em] font-light">
+              March - Present
             </div>
           </div>
 
-          <p className="text-sm text-white/60 mb-6">
-            Supervisor: Prof. Abhishek Dutta ·{" "}
-            <a
-  href="https://drive.google.com/file/d/1Sxrx6Ayejsuv0TSRfixfyZazqnUuyvA0/view?usp=sharing"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition"
->
-  Letter of Recommendation ↗
-</a>
+          {/* CONTENT */}
+          <div className="md:col-span-9">
 
-          </p>
+            <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
+              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                <img
+                  src={izmirLogo}
+                  alt="Izmir Institute of Technology logo"
+                  className="w-12 h-12 md:w-20 md:h-20 object-contain"
+                />
+              </div>
 
-          <ul className="space-y-3 md:space-y-4 text-sm md:text-base text-white/50 leading-relaxed font-light">
-            <li>
-              <span className="text-white/70">
-              Designed and trained models for chemical kinetics and population
-              balance systems, enforcing ODE constraints, conservation laws, and
-              equilibrium conditions.               </span>
-          
-            </li>
-            <li>
-              <span className="text-white/70">
-              Applied MATLAB-based heat transfer and fluid-flow simulations to
-              enable surrogate modeling and process optimization.
-              </span>{" "}
-              
-            </li>
-          </ul>
+              <div>
+                <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
+                   Research Assistant
+                </h3>
+                <p className="text-base md:text-lg text-white/80 mt-1">
+                  Izmir Institute of Technology, Türkiye
+                </p>
+              </div>
+            </div>
+
+            <p className="text-base text-white/70 mb-6">
+              Supervisor: Prof. Abhishek Dutta ·{" "}
+              <a
+                href="https://drive.google.com/file/d/1Sxrx6Ayejsuv0TSRfixfyZazqnUuyvA0/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 decoration-white/50 hover:decoration-white transition"
+              >
+                Letter of Recommendation ↗
+              </a>
+            </p>
+
+            <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-white/80 leading-relaxed">
+              <li>
+                Designed and trained models for chemical kinetics and population
+                balance systems, enforcing ODE constraints, conservation laws, and
+                equilibrium conditions.
+              </li>
+              <li>
+                Applied MATLAB-based heat transfer and fluid-flow simulations to
+                enable surrogate modeling and process optimization.
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
       {/* ================= IISc ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
-
+      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
         <div className="md:col-span-3">
           <div className="text-3xl md:text-5xl font-bold leading-none">2025</div>
           <div className="mt-1 md:mt-2 text-xs md:text-sm text-white/30 uppercase tracking-[0.2em] font-light">
@@ -1136,67 +1202,61 @@ I am still learning and trying to create social impact.
           </ul>
         </div>
       </div>
+      </div>
 
       {/* ================= IIM RANCHI ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
+      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
-        <div className="md:col-span-3">
-          <div className="text-3xl md:text-5xl font-bold leading-none">2024</div>
-          <div className="mt-1 md:mt-2 text-xs md:text-sm text-white/30 uppercase tracking-[0.2em] font-light">
-            Dec — Feb 2025
-          </div>
-        </div>
-
-        <div className="md:col-span-9">
-
-          <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
-            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-[0_0_40px_rgba(255,255,255,0.15)]">
-              <img
-                src={iimLogo}
-                alt="Indian Institute of Management Ranchi logo"
-                className="w-12 h-12 md:w-20 md:h-20 object-contain"
-              />
-            </div>
-
-            <div>
-              <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
-                Associate Researcher (Remote)
-              </h3>
-              <p className="text-sm md:text-lg text-white/70 mt-1">
-                Indian Institute of Management, Ranchi
-              </p>
+          <div className="md:col-span-3">
+            <div className="text-3xl md:text-5xl font-bold leading-none">2024</div>
+            <div className="mt-1 md:mt-2 text-sm md:text-base text-white/50 uppercase tracking-[0.2em] font-light">
+              Dec — Feb 2025
             </div>
           </div>
 
-          <p className="text-sm text-white/60 mb-6">
-            Supervisor: Prof. Sobhan Sarkar ·{" "}
-            <a
-  href="https://drive.google.com/file/d/107bVc-lJF9rjRSGXB6CvfbegI76zWUhb/view?usp=sharing"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition"
->
-  Project Completion Certificate ↗
-</a>
+          <div className="md:col-span-9">
 
-          </p>
+            <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
+              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-[0_0_40px_rgba(255,255,255,0.15)]">
+                <img
+                  src={iimLogo}
+                  alt="Indian Institute of Management Ranchi logo"
+                  className="w-12 h-12 md:w-20 md:h-20 object-contain"
+                />
+              </div>
 
-          <ul className="space-y-4 text-sm md:text-base text-white/50 leading-relaxed font-light">
-            <li>
-              <span className="text-white/70">
-              Built LSTM and GNN-based models for cybersecurity risk forecasting
-              using large historical datasets.
-              </span>{" "}
-              
-            </li>
-            <li>
-              <span className="text-white/70">
-               Engineered anomaly scoring, feature extraction, and attention-based
-              pipelines to improve interpretability and predictive accuracy.
-              </span>{" "}
-              
-            </li>
-          </ul>
+              <div>
+                <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
+                  Associate Researcher (Remote)
+                </h3>
+                <p className="text-base md:text-lg text-white/80 mt-1">
+                  Indian Institute of Management, Ranchi
+                </p>
+              </div>
+            </div>
+
+            <p className="text-base text-white/70 mb-6">
+              Supervisor: Prof. Sobhan Sarkar ·{" "}
+              <a
+                href="https://drive.google.com/file/d/107bVc-lJF9rjRSGXB6CvfbegI76zWUhb/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 decoration-white/50 hover:decoration-white transition"
+              >
+                Project Completion Certificate ↗
+              </a>
+            </p>
+
+            <ul className="space-y-4 text-base md:text-lg text-white/80 leading-relaxed">
+              <li>
+                Built LSTM and GNN-based models for cybersecurity risk forecasting using large historical datasets.
+              </li>
+              <li>
+                Engineered anomaly scoring, feature extraction, and attention-based pipelines to improve interpretability and predictive accuracy.
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -1249,25 +1309,27 @@ I am still learning and trying to create social impact.
   </div>
 
   {/* FULL-WIDTH DESCRIPTION */}
-  <div className="w-full text-white/50 leading-relaxed space-y-4 font-light">
-    <p>
-      An end-to-end MATLAB framework for the design and optimization of
-      shell-and-tube heat exchangers under realistic thermal, hydraulic,
-      and economic constraints.
-    </p>
+  <div className="w-full bg-gradient-to-r from-green-500/10 to-transparent rounded-2xl p-6 md:p-8 border-l-4 border-green-500">
+    <div className="text-white/80 leading-relaxed space-y-4 text-base md:text-lg">
+      <p>
+        An end-to-end MATLAB framework for the design and optimization of
+        shell-and-tube heat exchangers under realistic thermal, hydraulic,
+        and economic constraints.
+      </p>
 
-    <p>
-      The workflow combines energy balance and LMTD-based sizing with
-      mechanical design using TEMA standards, pressure-drop estimation,
-      and heat transfer correlations to iteratively refine the overall
-      heat transfer coefficient until convergence.
-    </p>
+      <p>
+        The workflow combines energy balance and LMTD-based sizing with
+        mechanical design using TEMA standards, pressure-drop estimation,
+        and heat transfer correlations to iteratively refine the overall
+        heat transfer coefficient until convergence.
+      </p>
 
-    <p>
-      Multiple geometric configurations are evaluated in parallel, with
-      the final design selected based on feasibility, convergence behavior,
-      pressure-drop limits, and capital cost.
-    </p>
+      <p>
+        Multiple geometric configurations are evaluated in parallel, with
+        the final design selected based on feasibility, convergence behavior,
+        pressure-drop limits, and capital cost.
+      </p>
+    </div>
   </div>
 </div>
 
@@ -1307,23 +1369,25 @@ I am still learning and trying to create social impact.
   ref={(el) => (pipelineCardsRef.current[i] = el)}
   className="group relative bg-[#161618] p-6 rounded-xl text-center
              border border-white/10 hover:border-green-500/50
-             transition-colors duration-300"
+             transition-all duration-300
+             [&.pipeline-glow-active]:border-green-500/50 [&.pipeline-glow-active]:bg-[#1a1f1a] [&.pipeline-glow-active]:shadow-[0_0_30px_rgba(34,197,94,0.2)]"
 >
 
           <div
   className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0b0b0c] px-2
-             text-xs font-mono text-white/40
-             group-hover:text-green-400 transition-colors"
+             text-xs font-mono text-white/60
+             group-hover:text-green-400 transition-colors
+             group-[.pipeline-glow-active]:text-green-400"
 >
 
             STEP {item.step}
           </div>
 
-          <h3 className="text-xl font-semibold mb-3 mt-2 group-hover:text-green-400 transition-colors">
+          <h3 className="text-xl font-semibold mb-3 mt-2 group-hover:text-green-400 transition-colors group-[.pipeline-glow-active]:text-green-400">
             {item.title}
           </h3>
 
-          <p className="text-sm text-white/60 leading-relaxed">
+          <p className="text-sm text-white/80 leading-relaxed">
             {item.desc}
           </p>
         </div>
@@ -1338,12 +1402,12 @@ I am still learning and trying to create social impact.
         <div className="w-3 h-3 rounded-full bg-red-500" />
         <div className="w-3 h-3 rounded-full bg-yellow-500" />
         <div className="w-3 h-3 rounded-full bg-green-500" />
-        <span className="ml-auto text-xs text-white/30">
+        <span className="ml-auto text-xs text-white/50">
           bash — sample output (example case)
         </span>
       </div>
 
-      <div className="space-y-1 text-white/70">
+      <div className="space-y-1 text-white/90">
         <p>Initializing design parameters...</p>
         <p>
           Iteration 1: U_calc = 460 W/m²K{" "}
@@ -1360,15 +1424,15 @@ I am still learning and trying to create social impact.
 
         <div className="mt-4 grid grid-cols-3 gap-4 border-t border-white/10 pt-4">
           <div>
-            <span className="block text-xs text-white/40">OVERALL U</span>
+            <span className="block text-xs text-white/60">OVERALL U</span>
             <span className="text-lg text-white">~720 W/m²K</span>
           </div>
           <div>
-            <span className="block text-xs text-white/40">PRESSURE DROP</span>
+            <span className="block text-xs text-white/60">PRESSURE DROP</span>
             <span className="text-lg text-white">&lt; 35 kPa</span>
           </div>
           <div>
-            <span className="block text-xs text-white/40">CAPITAL COST</span>
+            <span className="block text-xs text-white/60">CAPITAL COST</span>
             <span className="text-lg text-white">Within constraint</span>
           </div>
         </div>
@@ -1386,21 +1450,34 @@ I am still learning and trying to create social impact.
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     {/* ================= HEADER ================= */}
-    <div className="mb-8 md:mb-12">
-      <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-slate-400/70 mb-3">
-        PROJECT 04 
-      </p>
+    <div className="mb-10 border-b border-white/10 pb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
+        <div>
+          <p className="font-mono text-xs tracking-[0.35em] uppercase text-cyan-400 mb-3">
+            PROJECT 04 
+          </p>
 
-      <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-3">
-        Decarbonizing the Steel Industry
-      </h2>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+            Decarbonizing the Steel Industry
+          </h2>
+        </div>
+      </div>
 
-      {/* FULL-WIDTH DESCRIPTION */}
-      <p className="text-slate-400 leading-relaxed text-sm md:text-base font-light">
-        A system-level comparison of hydrogen-based reduction, electrified
-        furnaces, carbon capture, and process optimization under real-world
-        energy availability, infrastructure readiness, and retrofit constraints.
-      </p>
+      {/* STYLED DESCRIPTION BOX */}
+      <div className="bg-gradient-to-r from-cyan-500/10 to-transparent rounded-2xl p-6 md:p-8 border-l-4 border-cyan-500">
+        <div className="text-white/80 leading-relaxed space-y-4 text-base md:text-lg">
+          <p>
+            A system-level comparison of hydrogen-based reduction, electrified
+            furnaces, carbon capture, and process optimization under real-world
+            energy availability, infrastructure readiness, and retrofit constraints.
+          </p>
+          <p>
+            This analysis maps dominant production pathways against infrastructure
+            readiness and CO₂ intensity reduction potential, revealing which routes
+            offer the lowest system resistance under current constraints.
+          </p>
+        </div>
+      </div>
     </div>
 
     {/* ================= TOP CARDS ================= */}
@@ -1426,10 +1503,10 @@ I am still learning and trying to create social impact.
           key={i}
           className="p-6 rounded-xl bg-[#0f172a] border border-white/10"
         >
-          <h4 className="text-sm text-white/50 mb-2 uppercase tracking-wide">
+          <h4 className="text-sm text-white/70 mb-2 uppercase tracking-wide">
             {card.title}
           </h4>
-          <p className="text-sm text-white/80 leading-relaxed">
+          <p className="text-base text-white/90 leading-relaxed">
             {card.text}
           </p>
         </div>
@@ -1444,10 +1521,10 @@ I am still learning and trying to create social impact.
         <div className="relative aspect-[4/3] rounded-2xl bg-[#0f172a] border border-white/10 p-6">
 
           {/* Axis labels (FIXED POSITIONING) */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-white/40">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-white/60">
             Infrastructure & Energy Availability →
           </div>
-          <div className="absolute top-4 left-4 text-xs text-white/40">
+          <div className="absolute top-4 left-4 text-xs text-white/60">
             ↑ Process CO₂ Intensity Reduction
           </div>
 
@@ -1485,7 +1562,7 @@ I am still learning and trying to create social impact.
           </svg>
 
           {/* Legend */}
-          <div className="absolute top-4 right-4 text-[10px] text-white/40 text-right max-w-[150px]">
+          <div className="absolute top-4 right-4 text-xs text-white/60 text-right max-w-[150px]">
             Dominance ≠ adoption<br />
             Lowest system-level resistance
           </div>
@@ -1500,7 +1577,7 @@ I am still learning and trying to create social impact.
             System Interpretation — Present Conditions
           </h3>
 
-          <p className="text-white/70 leading-relaxed mb-6">
+          <p className="text-white/80 leading-relaxed mb-6">
             Under current grid carbon intensity, limited green hydrogen supply,
             and capital-heavy legacy steel infrastructure, hybrid Gas-DRI and
             Scrap-EAF routes offer the lowest resistance pathway to near-term
@@ -1509,25 +1586,25 @@ I am still learning and trying to create social impact.
 
           <div className="grid grid-cols-2 gap-6 text-sm">
             <div>
-              <span className="block text-white/40">Dominant pathway</span>
+              <span className="block text-white/60">Dominant pathway</span>
               <span className="text-white font-medium">
                 Gas-DRI / Scrap-EAF
               </span>
             </div>
             <div>
-              <span className="block text-white/40">CO₂ intensity</span>
+              <span className="block text-white/60">CO₂ intensity</span>
               <span className="text-white font-medium">
                 ~0.7–1.1 tCO₂ / t steel
               </span>
             </div>
             <div>
-              <span className="block text-white/40">Primary constraint</span>
+              <span className="block text-white/60">Primary constraint</span>
               <span className="text-white font-medium">
                 Green hydrogen availability
               </span>
             </div>
             <div>
-              <span className="block text-white/40">Role of CCUS</span>
+              <span className="block text-white/60">Role of CCUS</span>
               <span className="text-white font-medium">
                 Transitional retrofit option
               </span>
@@ -1535,7 +1612,7 @@ I am still learning and trying to create social impact.
           </div>
         </div>
 
-        <div className="text-xs text-white/40 leading-relaxed">
+        <div className="text-sm text-white/60 leading-relaxed">
           Assumptions:<br />
           Carbon price &gt; $80 / tCO₂ · Grid intensity &lt; 450 gCO₂ / kWh ·
           Limited green hydrogen availability
@@ -1552,13 +1629,13 @@ I am still learning and trying to create social impact.
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     <div className="mb-12 md:mb-20">
-      <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-slate-400 mb-3">
+      <p className="font-mono text-xs tracking-[0.35em] uppercase text-slate-500 mb-3">
         Academic Output
       </p>
       <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
         Publications
       </h2>
-      <p className="mt-2 text-sm md:text-base text-slate-400 font-light max-w-lg">
+      <p className="mt-2 text-base md:text-lg text-slate-600 max-w-lg">
         Peer-reviewed research in physics-informed machine learning.
       </p>
     </div>

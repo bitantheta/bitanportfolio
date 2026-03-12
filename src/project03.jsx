@@ -125,25 +125,27 @@ export function Project03() {
             </a>
           </div>
 
-          <div className="text-gray-600 leading-relaxed space-y-4">
-            <p>
-              This project explores pump and pipe system behavior by treating
-              flow rate, shaft power, and cavitation margin as governing
-              constraints rather than fixed outcomes.
-            </p>
+          <div className="bg-gradient-to-r from-blue-50 to-transparent rounded-2xl p-6 md:p-8 border-l-4 border-blue-500">
+            <div className="text-gray-700 leading-relaxed space-y-4 text-base md:text-lg">
+              <p>
+                This project explores pump and pipe system behavior by treating
+                flow rate, shaft power, and cavitation margin as governing
+                constraints rather than fixed outcomes.
+              </p>
 
-            <p>
-              For a given pipe geometry and roughness, the model evaluates
-              friction losses using Darcy–Weisbach with Colebrook–White
-              friction, constructs the system head curve, and compares it
-              against pump power limits to determine feasible operating points.
-            </p>
+              <p>
+                For a given pipe geometry and roughness, the model evaluates
+                friction losses using Darcy–Weisbach with Colebrook–White
+                friction, constructs the system head curve, and compares it
+                against pump power limits to determine feasible operating points.
+              </p>
 
-            <p>
-              The resulting visualization highlights how hydraulic losses,
-              power availability, and safety margins interact to limit system
-              performance, making design trade-offs explicit rather than implicit.
-            </p>
+              <p>
+                The resulting visualization highlights how hydraulic losses,
+                power availability, and safety margins interact to limit system
+                performance, making design trade-offs explicit rather than implicit.
+              </p>
+            </div>
           </div>
         </div>
 

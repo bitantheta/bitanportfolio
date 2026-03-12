@@ -111,38 +111,37 @@ export function Project01() {
     <section className="py-16 md:py-24 bg-white text-black">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
 
-        <p className="text-xs tracking-widest text-black/50 mb-4">
+        <p className="font-mono text-xs tracking-widest text-emerald-600 mb-4 uppercase">
           PROJECT 01 
         </p>
 
-        <h2 className="text-3xl md:text-5xl font-bold mb-4">
+        <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
           Solar-to-Hydrogen System Optimization
         </h2>
 
         {/* FULL-WIDTH DESCRIPTION */}
-        <div className="max-w-6xl text-black/70 space-y-4 mb-16">
-  <p>
-    This project models and optimizes a solar-powered PEM electrolyzer system by
-    coupling electrochemical performance, thermal behavior, and renewable energy
-    availability into a single physically constrained framework.
-  </p>
+        <div className="max-w-6xl bg-gradient-to-r from-emerald-50 to-transparent rounded-2xl p-6 md:p-8 mb-16 border-l-4 border-emerald-500">
+          <div className="text-gray-700 space-y-4 text-base md:text-lg leading-relaxed">
+            <p>
+              This project models and optimizes a solar-powered PEM electrolyzer system by
+              coupling electrochemical performance, thermal behavior, and renewable energy
+              availability into a single physically constrained framework.
+            </p>
 
-  <p>
-    Instead of assuming fixed efficiencies, the model computes hydrogen production
-    directly from Faraday’s law, voltage losses, stack scaling, and
-    temperature-dependent resistance, while enforcing hard limits imposed by
-    electrolyzer capacity and intermittent solar power. These constraints define
-    a feasible production envelope, within which an optimal operating point
-    naturally emerges.
-  </p>
+            <p>
+              Instead of assuming fixed efficiencies, the model computes hydrogen production
+              directly from Faraday's law, voltage losses, stack scaling, and
+              temperature-dependent resistance, while enforcing hard limits imposed by
+              electrolyzer capacity and intermittent solar power.
+            </p>
 
-  <p>
-    An interactive interface shown below allows exploration of how solar oversizing,
-    electrolyzer capacity, stack scaling, and cooling effectiveness influence
-    hydrogen output and specific energy consumption. Please inspect the full interactive model from the link given below
-    for a more detailed look.
-  </p>
-</div>
+            <p>
+              An interactive interface shown below allows exploration of how solar oversizing,
+              electrolyzer capacity, stack scaling, and cooling effectiveness influence
+              hydrogen output and specific energy consumption.
+            </p>
+          </div>
+        </div>
 
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
