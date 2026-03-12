@@ -3,10 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/bmlogo.png" />
+    <link rel="preload" as="image" href="/bmlogo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bitan Mukherjee</title>
-    <script type="module" crossorigin src="/assets/index-Bk4LLmp7.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DAx2sy2D.css">
+    <style>
+      /* Splash screen CSS - loads before React */
+      .splash-fade-out {
+        animation: splashFadeOut 0.8s ease-out forwards;
+      }
+      @keyframes splashFadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; visibility: hidden; }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-Cx8trkJG.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-G2i7c9q_.css">
   </head>
   <body>
     <div id="root"></div>
