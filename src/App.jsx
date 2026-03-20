@@ -1,24 +1,36 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import juLogo from "./assets/ju.png";
-import abInbevLogo from "./assets/abinbev.png";
-import myPhoto from "./assets/me.png";
-import solarDashboardImage from "./assets/solar-dashboard.png";
-import izmirLogo from "./assets/izmir.png";
-import iiscLogo from "./assets/iisc.png";
-import iimLogo from "./assets/iim.png";
-import bmLogo from "./assets/bmlogo.png";
-import { Project01 } from "./project01";
-import {Project03}  from "./project03";
-import CertificationsCarousel from "./CertificationsCarousel";
-import LeadershipCarousel from "./LeadershipCarousel";
+
+const Project01 = lazy(() => import("./project01").then((module) => ({ default: module.Project01 })));
+const Project03 = lazy(() => import("./project03").then((module) => ({ default: module.Project03 })));
+const CertificationsCarousel = lazy(() => import("./CertificationsCarousel"));
+const LeadershipCarousel = lazy(() => import("./LeadershipCarousel"));
+
+const cdnBase = import.meta.env.VITE_IMAGE_CDN_BASE?.replace(/\/$/, "");
+const assetUrl = (relativePath) => {
+  const cleanPath = relativePath.replace(/^\//, "");
+  return cdnBase ? `${cdnBase}/${cleanPath}` : `${import.meta.env.BASE_URL}${cleanPath}`;
+};
 
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 export default function App() {
+  const juLogo = assetUrl("assets/ju-512.webp");
+  const abInbevLogo = assetUrl("assets/abinbev-512.webp");
+  const izmirLogo = assetUrl("assets/izmir-512.webp");
+  const iiscLogo = assetUrl("assets/iisc-512.webp");
+  const iimLogo = assetUrl("assets/iim-512.webp");
+  const bmLogo = assetUrl("assets/bmlogo-768.webp");
+  const myPhoto = {
+    avif900: assetUrl("assets/me-900.avif"),
+    webp900: assetUrl("assets/me-900.webp"),
+    avif1600: assetUrl("assets/me-1600.avif"),
+    webp1600: assetUrl("assets/me-1600.webp")
+  };
+
   const nameRef = useRef(null);
   const textRef = useRef(null);
 
@@ -65,13 +77,17 @@ const specificEnergy = thermalActive ? 82.9 : 78.5;
   const certsWrapperRef = useRef(null);
   const leadershipRef = useRef(null);
   const mobileHeroRef = useRef(null);
+  const projectsTriggerRef = useRef(null);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("hero");
   const [roleIndex, setRoleIndex] = useState(0);
   const [showSplash, setShowSplash] = useState(true);
+  const [logoLoaded, setLogoLoaded] = useState(false);
   const splashRef = useRef(null);
+  const [loadProjectVisuals, setLoadProjectVisuals] = useState(false);
+  const [loadCarousels, setLoadCarousels] = useState(false);
 
   const roles = ["Process Modelling", "System Simulation", "CFD Analysis", "Reactor Modelling", "Feature Engineering", "Flow Simulation"];
 
@@ -87,42 +103,60 @@ const specificEnergy = thermalActive ? 82.9 : 78.5;
     title: "Machine Learning Specialization",
     issuer: "Stanford Online",
     date: "Mar 2025",
-    image: `${import.meta.env.BASE_URL}certificates/ml-specialization.png`,
+    image: {
+      avif: assetUrl("certificates/ml-specialization-1200.avif"),
+      webp: assetUrl("certificates/ml-specialization-1200.webp")
+    },
     link: "https://coursera.org/verify/F6XLC63PI9XH",
   },
   {
     title: "Unsupervised Learning, Recommenders, RL",
     issuer: "Stanford Online",
     date: "Mar 2025",
-    image: `${import.meta.env.BASE_URL}certificates/unsupervised-rl.png`,
+    image: {
+      avif: assetUrl("certificates/unsupervised-rl-1200.avif"),
+      webp: assetUrl("certificates/unsupervised-rl-1200.webp")
+    },
     link: "https://coursera.org/verify/M4G9BP49QCPC",
   },
   {
     title: "Advanced Learning Algorithms",
     issuer: "Stanford Online",
     date: "Dec 2024",
-    image: `${import.meta.env.BASE_URL}certificates/advanced-algos.png`,
+    image: {
+      avif: assetUrl("certificates/advanced-algos-1200.avif"),
+      webp: assetUrl("certificates/advanced-algos-1200.webp")
+    },
     link: "https://coursera.org/verify/DTZTW27XI5RX",
   },
   {
     title: "Introduction to Graph Algorithms",
     issuer: "IISc Bangalore",
     date: "Oct 2024",
-    image: `${import.meta.env.BASE_URL}certificates/graph-algos.png`,
+    image: {
+      avif: assetUrl("certificates/graph-algos-1200.avif"),
+      webp: assetUrl("certificates/graph-algos-1200.webp")
+    },
     link: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL24CS70S33920025502651252",
   },
   {
     title: "Introduction to Machine Learning",
     issuer: "IIT Kharagpur",
     date: "Oct 2024",
-    image: `${import.meta.env.BASE_URL}certificates/iit-ml.png`,
+    image: {
+      avif: assetUrl("certificates/iit-ml-1200.avif"),
+      webp: assetUrl("certificates/iit-ml-1200.webp")
+    },
     link: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL24CS81S43920053802651252",
   },
   {
     title: "Python for Data Science",
     issuer: "IIT Madras",
     date: "Oct 2024",
-    image: `${import.meta.env.BASE_URL}certificates/python-ds.png`,
+    image: {
+      avif: assetUrl("certificates/python-ds-1200.avif"),
+      webp: assetUrl("certificates/python-ds-1200.webp")
+    },
     link: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL24CS68S13920012202651252",
   },
 ];
@@ -218,18 +252,56 @@ useEffect(() => {
   return () => clearInterval(timer);
 }, []);
 
-// Splash screen animation
+// Splash screen - wait for logo then fade out with CSS
 useEffect(() => {
-  if (!splashRef.current) return;
+  if (!logoLoaded || !splashRef.current) return;
   
-  // Logo is already visible, just hold then smoothly fade out
-  gsap.to(splashRef.current, {
-    opacity: 0,
-    duration: 1,
-    delay: 1.5,
-    ease: "power2.inOut",
-    onComplete: () => setShowSplash(false)
-  });
+  // Add CSS fade-out class after brief display
+  const timer = setTimeout(() => {
+    if (splashRef.current) {
+      splashRef.current.classList.add('splash-fade-out');
+      // Remove from DOM after animation
+      setTimeout(() => setShowSplash(false), 800);
+    }
+  }, 1200);
+  
+  return () => clearTimeout(timer);
+}, [logoLoaded]);
+
+useEffect(() => {
+  const observers = [];
+
+  if (projectsTriggerRef.current) {
+    const projectObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoadProjectVisuals(true);
+          projectObserver.disconnect();
+        }
+      },
+      { rootMargin: "500px 0px" }
+    );
+    projectObserver.observe(projectsTriggerRef.current);
+    observers.push(projectObserver);
+  }
+
+  if (certsWrapperRef.current) {
+    const carouselObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoadCarousels(true);
+          carouselObserver.disconnect();
+        }
+      },
+      { rootMargin: "400px 0px" }
+    );
+    carouselObserver.observe(certsWrapperRef.current);
+    observers.push(carouselObserver);
+  }
+
+  return () => {
+    observers.forEach((observer) => observer.disconnect());
+  };
 }, []);
 
 
@@ -456,6 +528,20 @@ useEffect(() => {
         onLeaveBack: () => card.classList.remove("pipeline-glow-active"),
       });
     });
+
+    // Experience cards
+    const experienceCards = document.querySelectorAll("[data-experience-card]");
+    experienceCards.forEach((card) => {
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top 70%",
+        end: "bottom 30%",
+        onEnter: () => card.classList.add("mobile-glow-active"),
+        onLeave: () => card.classList.remove("mobile-glow-active"),
+        onEnterBack: () => card.classList.add("mobile-glow-active"),
+        onLeaveBack: () => card.classList.remove("mobile-glow-active"),
+      });
+    });
   }
 
   // ===============================
@@ -581,7 +667,11 @@ useEffect(() => {
         <img
           src={bmLogo}
           alt="Logo"
-          className="splash-logo w-64 h-64 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] object-contain"
+          onLoad={() => setLogoLoaded(true)}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className={`splash-logo w-64 h-64 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] object-contain transition-opacity duration-300 ${logoLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       </div>
     )}
@@ -641,14 +731,14 @@ useEffect(() => {
 
       {/* Rotating role label */}
       <p className="font-mono text-xs tracking-[0.2em] uppercase text-blue-400 mb-3 h-5 overflow-hidden">
-        <span key={roleIndex} className="inline-block animate-[fadeSlideUp_0.5s_ease-out]">
+        <span key={roleIndex} className="inline-block animate-[fadeSlideUp_0.1s_ease-out]">
           {roles[roleIndex]}
         </span>
       </p>
 
       {/* Brief one-liner */}
       <p className="text-sm text-white/40 font-light leading-relaxed max-w-[280px]">
-        Undergraduate student exploring the intersection of process engineering and machine learning.
+      Undergraduate student exploring computational approaches to process and fluid engineering.
       </p>
 
       {/* Social icons */}
@@ -769,7 +859,7 @@ useEffect(() => {
   <div className="absolute bottom-[6vh] left-0 w-full px-6 md:px-10 hidden md:block">
 
     {/* Mono label */}
-    <p className="font-mono text-sm md:text-base tracking-[0.4em] uppercase text-white/80 mb-4">
+    <p className="font-mono text-sm md:text-base tracking-[0.4em] text-white/80 mb-4">
       Hi, I am
     </p>
 
@@ -803,7 +893,7 @@ useEffect(() => {
     <div className="lg:col-span-8 flex items-center">
       <div className="w-full">
 
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 md:mb-3 tracking-tight">
+        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 md:mb-3">
           About Me
         </h2>
         <p className="text-sm md:text-base text-gray-400 font-light mb-6 md:mb-8">
@@ -831,7 +921,7 @@ I am still learning and trying to create social impact.
 
           {/* CURRENT */}
           <div className="flex items-center gap-5 bg-white rounded-2xl p-5 shadow-sm">
-            <img src={juLogo} alt="Jadavpur University" className="w-12 h-14 object-contain flex-shrink-0" />
+            <img src={juLogo} alt="Jadavpur University" loading="lazy" decoding="async" className="w-12 h-14 object-contain flex-shrink-0" />
             <div>
               <div className="text-xs tracking-widest text-gray-400 mb-1">CURRENT</div>
               <div className="text-base font-semibold text-gray-900">Chemical Engineering</div>
@@ -841,11 +931,11 @@ I am still learning and trying to create social impact.
 
           {/* UPCOMING */}
           <div className="flex items-center gap-5 bg-white rounded-2xl p-5 shadow-sm">
-            <img src={abInbevLogo} alt="AB InBev" className="w-20 h-10 object-contain flex-shrink-0" />
+            <img src={abInbevLogo} alt="AB InBev" loading="lazy" decoding="async" className="w-20 h-10 object-contain flex-shrink-0" />
             <div>
               <div className="text-xs tracking-widest text-gray-400 mb-1">UPCOMING</div>
               <div className="text-base font-semibold text-gray-900">Summer Internship, AB InBev India</div>
-              <p className="text-xs text-gray-500 mt-1">Supply Chain Excellence Trainee — Summer 2026</p>
+              <p className="text-xs text-gray-500 mt-1">Supply Chain Excellence Trainee in Summer 2026</p>
             </div>
           </div>
         </div>
@@ -896,6 +986,8 @@ I am still learning and trying to create social impact.
                   <img
                     src={juLogo}
                     alt="Jadavpur University"
+                    loading="lazy"
+                    decoding="async"
                     className="w-16 h-20 object-contain mb-4"
                   />
                   <div className="text-xl font-semibold text-gray-900">
@@ -929,6 +1021,8 @@ I am still learning and trying to create social impact.
                   <img
                     src={abInbevLogo}
                     alt="AB InBev"
+                    loading="lazy"
+                    decoding="async"
                     className="w-32 h-16 object-contain mb-4"
                   />
                   <div className="text-xl font-semibold text-gray-900 leading-snug">
@@ -959,11 +1053,25 @@ I am still learning and trying to create social impact.
     {/* RIGHT — PHOTO (UNCHANGED) */}
     <div className="lg:col-span-4 flex justify-center lg:justify-end">
       <div className="w-full max-w-[320px] h-[400px] sm:max-w-[400px] sm:h-[500px] lg:max-w-[500px] lg:h-[600px] rounded-[2rem] bg-gray-200 overflow-hidden">
-        <img
-          src={myPhoto}
-          alt="Bitan Mukherjee"
-          className="w-full h-full object-cover"
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={`${myPhoto.avif900} 900w, ${myPhoto.avif1600} 1600w`}
+            sizes="(max-width: 640px) 320px, (max-width: 1024px) 400px, 500px"
+          />
+          <source
+            type="image/webp"
+            srcSet={`${myPhoto.webp900} 900w, ${myPhoto.webp1600} 1600w`}
+            sizes="(max-width: 640px) 320px, (max-width: 1024px) 400px, 500px"
+          />
+          <img
+            src={myPhoto.webp1600}
+            alt="Bitan Mukherjee"
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
+        </picture>
       </div>
     </div>
 
@@ -982,11 +1090,11 @@ I am still learning and trying to create social impact.
     <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-blue-400/60 mb-4">
       What I work with
     </p>
-    <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">
+    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-white">
       Skills &amp; Tools
     </h2>
     <p className="text-sm md:text-base text-white/35 font-light mb-12 md:mb-16 max-w-lg">
-      From physics-based modeling to machine learning — the toolkit I use to solve real-world problems.
+      From physics-based modeling to machine learning, the tools I use to solve real-world problems.
     </p>
 
     <div
@@ -1004,7 +1112,7 @@ I am still learning and trying to create social impact.
           </div>
           <h3 className="text-lg font-semibold mb-2 text-white">Modeling &amp; Simulation</h3>
           <p className="text-sm text-white/50 mb-5 leading-relaxed">
-            Physics-based system modeling across fluid, thermal, and reactive domains.
+            System modeling across fluid, thermal, and reactive domains.
           </p>
           <div className="flex flex-wrap gap-2">
             {["Fluid Flow", "Heat Transfer", "Reaction Kinetics", "Transport Phenomena", "CFD"].map(s => (
@@ -1071,25 +1179,25 @@ I am still learning and trying to create social impact.
     <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-3">
       Where I’ve worked
     </p>
-    <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight mb-2 md:mb-4">
+    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 md:mb-4">
       Experience
     </h2>
     <p className="text-sm md:text-base text-white/30 font-light mb-10 md:mb-16 max-w-xl">
-      Research, internships, and industry exposure across three countries.
+      Research, internships, and industry exposure across multiple domains.
     </p>
 
     {/* EXPERIENCE LIST */}
     <div className="flex flex-col space-y-10 md:space-y-16">
 
       {/* ================= IZTECH ================= */}
-      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8">
+      <div data-experience-card className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)] [&.mobile-glow-active]:border-cyan-400/50 [&.mobile-glow-active]:bg-white/[0.08] [&.mobile-glow-active]:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
           {/* DATE */}
           <div className="md:col-span-3">
             <div className="text-3xl md:text-5xl font-bold leading-none">2025-26</div>
             <div className="mt-1 md:mt-2 text-sm md:text-base text-white/50 uppercase tracking-[0.2em] font-light">
-              March - Present
+              March - January
             </div>
           </div>
 
@@ -1101,6 +1209,8 @@ I am still learning and trying to create social impact.
                 <img
                   src={izmirLogo}
                   alt="Izmir Institute of Technology logo"
+                  loading="lazy"
+                  decoding="async"
                   className="w-12 h-12 md:w-20 md:h-20 object-contain"
                 />
               </div>
@@ -1143,7 +1253,7 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* ================= IISc ================= */}
-      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8">
+      <div data-experience-card className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)] [&.mobile-glow-active]:border-cyan-400/50 [&.mobile-glow-active]:bg-white/[0.08] [&.mobile-glow-active]:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
         <div className="md:col-span-3">
           <div className="text-3xl md:text-5xl font-bold leading-none">2025</div>
@@ -1159,6 +1269,8 @@ I am still learning and trying to create social impact.
               <img
                 src={iiscLogo}
                 alt="Indian Institute of Science logo"
+                loading="lazy"
+                decoding="async"
                 className="w-12 h-12 md:w-20 md:h-20 object-contain"
               />
             </div>
@@ -1185,27 +1297,22 @@ I am still learning and trying to create social impact.
 </a>
 
           </p>
-
-          <ul className="space-y-4 text-sm md:text-base text-white/50 leading-relaxed font-light">
-            <li>
-              <span className="text-white font-medium">
-               Selected for the prestigious NPTEL Summer Internship 2025, I conducted research at IISc Bengaluru on “Minimum Spanning Tree Algorithms”.Implemented Minimum Spanning Tree (MST) algorithms for scalable
+<ul className="space-y-3 md:space-y-4 text-base md:text-lg text-white/80 leading-relaxed">
+              <li>
+                Selected for the prestigious NPTEL Summer Internship 2025, I conducted research at IISc Bengaluru on “Minimum Spanning Tree Algorithms”.Implemented Minimum Spanning Tree (MST) algorithms for scalable
               engineering system optimization and network analysis. 
-              </span>{" "}
-            </li>
-            <li>
-              <span className="text-white/70">
+              </li>
+              <li>
                 This experience deepened my understanding of graph algorithms and strengthened my ability to integrate theoretical insight with practical problem-solving.
-              </span>{" "}
-              
-            </li>
-          </ul>
+              </li>
+            </ul>
+
         </div>
       </div>
       </div>
 
       {/* ================= IIM RANCHI ================= */}
-      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8">
+      <div data-experience-card className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)] [&.mobile-glow-active]:border-cyan-400/50 [&.mobile-glow-active]:bg-white/[0.08] [&.mobile-glow-active]:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
           <div className="md:col-span-3">
@@ -1222,6 +1329,8 @@ I am still learning and trying to create social impact.
                 <img
                   src={iimLogo}
                   alt="Indian Institute of Management Ranchi logo"
+                  loading="lazy"
+                  decoding="async"
                   className="w-12 h-12 md:w-20 md:h-20 object-contain"
                 />
               </div>
@@ -1268,11 +1377,18 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= PROJECTS ================= */}
+<div ref={projectsTriggerRef} className="h-px w-full" />
 <section id="projects" className="bg-neutral-950 text-white">
 
 
   {/* ================= PROJECT 01 — REIMAGINED: HYDROGEN SYSTEM ================= */}
-  <Project01 />
+  {loadProjectVisuals ? (
+    <Suspense fallback={<div className="h-[520px] bg-white/5 animate-pulse" />}>
+      <Project01 />
+    </Suspense>
+  ) : (
+    <div className="h-[520px] bg-white/5 animate-pulse" />
+  )}
 
 {/* ================= PROJECT 02 — ITERATIVE THERMO-MECHANICAL DESIGN ================= */}
 <section
@@ -1443,7 +1559,13 @@ I am still learning and trying to create social impact.
 </section>
 
 
-<Project03 />
+{loadProjectVisuals ? (
+  <Suspense fallback={<div className="h-[520px] bg-white/5 animate-pulse" />}>
+    <Project03 />
+  </Suspense>
+) : (
+  <div className="h-[520px] bg-white/5 animate-pulse" />
+)}
 
 {/* ================= PROJECT 04 — SYSTEMS PHASE MAP ================= */}
 <section ref={project04Ref} className="py-16 md:py-24 bg-[#0b1220] text-white relative overflow-hidden">
@@ -1486,7 +1608,7 @@ I am still learning and trying to create social impact.
         {
           title: "Global impact",
           text:
-            "Steel production contributes ~11% of global CO₂ emissions, dominated by blast furnace–basic oxygen furnace (BF–BOF) routes."
+            "Steel production contributes ~11% of global CO₂ emissions, dominated by blast furnace basic oxygen furnace (BF–BOF) routes."
         },
         {
           title: "Core challenge",
@@ -1574,7 +1696,7 @@ I am still learning and trying to create social impact.
 
         <div className="p-8 rounded-2xl bg-[#0f172a] border border-white/10">
           <h3 className="text-2xl font-semibold mb-4">
-            System Interpretation — Present Conditions
+            System Interpretation - Present Conditions
           </h3>
 
           <p className="text-white/80 leading-relaxed mb-6">
@@ -1629,10 +1751,7 @@ I am still learning and trying to create social impact.
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     <div className="mb-12 md:mb-20">
-      <p className="font-mono text-xs tracking-[0.35em] uppercase text-slate-500 mb-3">
-        Academic Output
-      </p>
-      <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
+      <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
         Publications
       </h2>
       <p className="mt-2 text-base md:text-lg text-slate-600 max-w-lg">
@@ -1708,13 +1827,15 @@ I am still learning and trying to create social impact.
         </div>
 
         {/* CTA */}
-        <a
-          href="#"
-          className="inline-flex items-center gap-2 text-sm font-medium
-                     text-blue-600 hover:text-blue-800 transition"
-        >
-          View journal article →
-        </a>
+<a
+  href="https://www.mdpi.com/3645648"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 text-sm font-medium
+             text-blue-600 hover:text-blue-800 transition"
+>
+  View journal article →
+</a>
       </div>
 
       {/* ========== DESKTOP LAYOUT (unchanged) ========== */}
@@ -1747,7 +1868,9 @@ I am still learning and trying to create social impact.
 
           <div className="pt-6 border-t border-slate-200 space-y-2">
             <a
-              href="#"
+              href="https://www.mdpi.com/3645648"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium
                          text-blue-600 hover:text-blue-800 transition"
             >
@@ -1814,7 +1937,13 @@ I am still learning and trying to create social impact.
 
 {/* ================= CERTIFICATIONS ================= */}
 <div ref={certsWrapperRef}>
-<CertificationsCarousel certifications={certifications} />
+  {loadCarousels ? (
+    <Suspense fallback={<div className="h-[380px] bg-black/60 animate-pulse" />}>
+      <CertificationsCarousel certifications={certifications} />
+    </Suspense>
+  ) : (
+    <div className="h-[380px] bg-black/60 animate-pulse" />
+  )}
 </div>
 
 
@@ -1826,14 +1955,20 @@ I am still learning and trying to create social impact.
       Leadership
     </p>
 
-    <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
+    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
       Positions of Responsibility
     </h2>
     <p className="text-sm text-slate-400 font-light mb-8">
       Campus and community leadership roles.
     </p>
 
-    <LeadershipCarousel />
+    {loadCarousels ? (
+      <Suspense fallback={<div className="h-[300px] bg-slate-200 animate-pulse rounded-2xl" />}>
+        <LeadershipCarousel />
+      </Suspense>
+    ) : (
+      <div className="h-[300px] bg-slate-200 animate-pulse rounded-2xl" />
+    )}
 
   </div>
 </section>

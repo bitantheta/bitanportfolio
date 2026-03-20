@@ -1,5 +1,11 @@
 import { useEffect, useRef, useCallback } from "react";
 
+const cdnBase = import.meta.env.VITE_IMAGE_CDN_BASE?.replace(/\/$/, "");
+const assetUrl = (relativePath) => {
+  const cleanPath = relativePath.replace(/^\//, "");
+  return cdnBase ? `${cdnBase}/${cleanPath}` : `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+
 export default function LeadershipCarousel() {
   const containerRef = useRef(null);
   const animRef = useRef(null);
@@ -9,43 +15,64 @@ export default function LeadershipCarousel() {
 
   const data = [
     {
-      image: `${import.meta.env.BASE_URL}leadership/dps-vice-head-boy.png`,
+      image: {
+        avif: assetUrl("leadership/dps-vice-head-boy-600.avif"),
+        webp: assetUrl("leadership/dps-vice-head-boy-600.webp")
+      },
       role: "Vice Head Boy",
       org: "DPS Ruby Park",
       year: "Class XI",
     },
     {
-      image: `${import.meta.env.BASE_URL}leadership/dps-house-captain.png`,
+      image: {
+        avif: assetUrl("leadership/dps-house-captain-600.avif"),
+        webp: assetUrl("leadership/dps-house-captain-600.webp")
+      },
       role: "House Captain",
       org: "DPS Ruby Park",
       year: "Class XII",
     },
     {
-      image: `${import.meta.env.BASE_URL}leadership/jumun-24-oc-finance.png`,
+      image: {
+        avif: assetUrl("leadership/jumun-24-oc-finance-600.avif"),
+        webp: assetUrl("leadership/jumun-24-oc-finance-600.webp")
+      },
       role: "OC Finance",
       org: "JUMUN",
       year: "2024",
     },
     {
-      image: `${import.meta.env.BASE_URL}leadership/voxpop-24-director-finance.png`,
+      image: {
+        avif: assetUrl("leadership/voxpop-24-director-finance-600.avif"),
+        webp: assetUrl("leadership/voxpop-24-director-finance-600.webp")
+      },
       role: "Director (Finance)",
       org: "VOXPOP",
       year: "2024",
     },
     {
-      image: `${import.meta.env.BASE_URL}leadership/intramun-24-finance-officer.png`,
+      image: {
+        avif: assetUrl("leadership/intramun-24-finance-officer-600.avif"),
+        webp: assetUrl("leadership/intramun-24-finance-officer-600.webp")
+      },
       role: "Finance Officer",
       org: "INTRAMUN",
       year: "2024",
     },
     {
-      image: `${import.meta.env.BASE_URL}leadership/jumun-25-charge-affairs.png`,
+      image: {
+        avif: assetUrl("leadership/jumun-25-charge-affairs-600.avif"),
+        webp: assetUrl("leadership/jumun-25-charge-affairs-600.webp")
+      },
       role: "Chargé d’Affaires",
       org: "JUMUN",
       year: "2025",
     },
     {
-      image: `${import.meta.env.BASE_URL}leadership/voxpop-25-treasurer.png`,
+      image: {
+        avif: assetUrl("leadership/voxpop-25-treasurer-600.avif"),
+        webp: assetUrl("leadership/voxpop-25-treasurer-600.webp")
+      },
       role: "Treasurer",
       org: "VOXPOP",
       year: "2025",
@@ -157,12 +184,18 @@ export default function LeadershipCarousel() {
               "
             >
               {/* IMAGE */}
-              <div className="h-28 flex items-center justify-center mb-4">
-                <img
-                  src={item.image}
-                  alt={item.role}
-                  className="max-h-full max-w-full object-contain"
-                />
+              <div className="h-24 flex items-center justify-center mb-5 rounded-xl bg-white/[0.04] border border-white/10">
+                <picture>
+                  <source type="image/avif" srcSet={item.image.avif} />
+                  <source type="image/webp" srcSet={item.image.webp} />
+                  <img
+                    src={item.image.webp}
+                    alt={item.role}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-[72px] max-w-[120px] object-contain"
+                  />
+                </picture>
               </div>
 
               {/* TEXT */}

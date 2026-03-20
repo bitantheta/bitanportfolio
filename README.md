@@ -1,16 +1,29 @@
-# React + Vite
+# Portfolio Performance Notes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Image Optimization
 
-Currently, two official plugins are available:
+Generate responsive AVIF and WEBP assets:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm run optimize:images
+```
 
-## React Compiler
+Generated files are stored in public folders and referenced via URL strings so they are not bundled into the initial JavaScript chunk.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Optional CDN Delivery
 
-## Expanding the ESLint configuration
+Set a CDN base URL to serve all optimized images from a transformer/CDN endpoint:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+VITE_IMAGE_CDN_BASE=https://cdn.example.com
+```
+
+If unset, assets are served from the local public directory.
+
+## Build Compression
+
+The Vite build now emits precompressed gzip and brotli assets. Configure your host to serve .br first, then .gz, and enable long cache lifetimes for hashed assets.
+
+## Fonts
+
+Keep typography lightweight: use one font family and at most one or two weights to reduce render-blocking CSS and font transfer size.

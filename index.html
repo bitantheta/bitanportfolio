@@ -2,9 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/bmlogo.png" />
+    <link rel="icon" type="image/webp" href="/assets/bmlogo-512.webp" />
+    <link rel="preload" as="image" href="/assets/bmlogo-768.webp" imagesrcset="/assets/bmlogo-512.webp 512w, /assets/bmlogo-768.webp 768w" imagesizes="(max-width: 768px) 256px, 384px" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bitan Mukherjee</title>
+    <style>
+      /* Splash screen CSS - loads before React */
+      .splash-fade-out {
+        animation: splashFadeOut 0.8s ease-out forwards;
+      }
+      @keyframes splashFadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; visibility: hidden; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

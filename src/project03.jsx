@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import Plot from "react-plotly.js";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Plotly from "plotly.js-basic-dist-min";
 
 /* ===================== CONSTANTS ===================== */
 const g = 9.81;
@@ -70,6 +70,7 @@ function Slider({ label, unit, min, max, value, onChange }) {
 
 /* ===================== MAIN ===================== */
 export function Project03() {
+  const plotRef = useRef(null);
   const [flow_m3h, setFlow] = useState(245);
   const [powerLimit, setPowerLimit] = useState(25);
   const [safety, setSafety] = useState(60);
@@ -95,6 +96,81 @@ export function Project03() {
     return { Qs, Hsys, Hlim };
   }, [powerLimit]);
 
+  useEffect(() => {
+    const plotNode = plotRef.current;
+    if (!plotNode) return;
+
+    Plotly.react(
+      plotNode,
+      [
+        {
+          x: plotData.Qs,
+          y: plotData.Hsys,
+          mode: "lines",
+          name: "System head curve",
+          line: { color: "#2563eb", width: 3 }
+        },
+        {
+          x: plotData.Qs,
+          y: plotData.Hlim,
+          mode: "lines",
+          name: "Power constraint",
+          line: { color: "#dc2626", dash: "dash" }
+        },
+        {
+          x: [flow_m3h],
+          y: [H],
+          mode: "markers",
+          name: "Operating point",
+          marker: { size: 12, color: "black" }
+        }
+      ],
+      {
+        autosize: true,
+        height: 400,
+        margin: { t: 10, r: 10, l: 50, b: 60 },
+        xaxis: {
+          title: {
+            text: "Flow Rate, Q (m³/h)",
+            standoff: 12
+          },
+          showline: true,
+          linecolor: "#9ca3af",
+          ticks: "outside",
+          tickcolor: "#9ca3af",
+          gridcolor: "#e5e7eb",
+          zeroline: false
+        },
+        yaxis: {
+          title: {
+            text: "Head, H (m)",
+            standoff: 10
+          },
+          showline: true,
+          linecolor: "#9ca3af",
+          ticks: "outside",
+          tickcolor: "#9ca3af",
+          gridcolor: "#e5e7eb",
+          zeroline: false
+        },
+        legend: {
+          orientation: "h",
+          y: -0.25,
+          x: 0.5,
+          xanchor: "center",
+          font: { size: 11 }
+        },
+        plot_bgcolor: "white",
+        paper_bgcolor: "white"
+      },
+      { displayModeBar: false, responsive: true }
+    );
+
+    return () => {
+      Plotly.purge(plotNode);
+    };
+  }, [flow_m3h, H, plotData]);
+
   return (
     <section className="py-16 md:py-24 bg-white text-black">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
@@ -108,7 +184,7 @@ export function Project03() {
                 PROJECT 03
               </p>
 
-              <h2 className="text-3xl md:text-5xl font-bold">
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
                 Constraint-Based Pump & Pipe Design
               </h2>
             </div>
@@ -196,76 +272,7 @@ export function Project03() {
 
           {/* RIGHT */}
           <div className="lg:col-span-8 w-full overflow-hidden">
-            <Plot
-              data={[
-                {
-                  x: plotData.Qs,
-                  y: plotData.Hsys,
-                  mode: "lines",
-                  name: "System head curve",
-                  line: { color: "#2563eb", width: 3 }
-                },
-                {
-                  x: plotData.Qs,
-                  y: plotData.Hlim,
-                  mode: "lines",
-                  name: "Power constraint",
-                  line: { color: "#dc2626", dash: "dash" }
-                },
-                {
-                  x: [flow_m3h],
-                  y: [H],
-                  mode: "markers",
-                  name: "Operating point",
-                  marker: { size: 12, color: "black" }
-                }
-              ]}
-              layout={{
-                autosize: true,
-                height: 400,
-                margin: { t: 10, r: 10, l: 50, b: 60 },
-
-                xaxis: {
-                  title: {
-                    text: "Flow Rate, Q (m³/h)",
-                    standoff: 12
-                  },
-                  showline: true,
-                  linecolor: "#9ca3af",
-                  ticks: "outside",
-                  tickcolor: "#9ca3af",
-                  gridcolor: "#e5e7eb",
-                  zeroline: false
-                },
-
-                yaxis: {
-                  title: {
-                    text: "Head, H (m)",
-                    standoff: 10
-                  },
-                  showline: true,
-                  linecolor: "#9ca3af",
-                  ticks: "outside",
-                  tickcolor: "#9ca3af",
-                  gridcolor: "#e5e7eb",
-                  zeroline: false
-                },
-
-                legend: {
-                  orientation: "h",
-                  y: -0.25,
-                  x: 0.5,
-                  xanchor: "center",
-                  font: { size: 11 }
-                },
-
-                plot_bgcolor: "white",
-                paper_bgcolor: "white"
-              }}
-              useResizeHandler={true}
-              style={{ width: "100%", height: "100%" }}
-              config={{ displayModeBar: false, responsive: true }}
-            />
+            <div ref={plotRef} className="w-full h-[400px]" />
           </div>
 
         </div>

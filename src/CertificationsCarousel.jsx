@@ -71,7 +71,7 @@ export default function CertificationsCarousel({ certifications }) {
           CERTIFICATIONS
         </p>
 
-        <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-10">
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-8 md:mb-10">
           Technical Training & Credentials
         </h2>
 
@@ -122,64 +122,76 @@ export default function CertificationsCarousel({ certifications }) {
           >
             <div className="flex gap-4 md:gap-10">
 
-              {items.map((cert, i) => (
-                <a
-                  key={i}
-                  href={cert.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="
-                    group relative
-                    min-w-[280px] h-[200px]
-                    md:min-w-[520px] md:h-[360px]
-                    rounded-2xl overflow-hidden
-                    shadow-[0_40px_80px_rgba(0,0,0,0.6)]
-                    transform transition-all duration-500
-                    hover:-translate-y-2 hover:rotate-[-0.5deg]
-                  "
-                >
-                  {/* CERTIFICATE IMAGE */}
-                  <img
-                    src={cert.image}
-                    alt={cert.title}
-                    className="
-                      w-full h-full object-contain
-                      bg-white
-                    "
-                  />
+              {items.map((cert, i) => {
+                const image = typeof cert.image === "string"
+                  ? { webp: cert.image }
+                  : cert.image;
 
-                  {/* HOVER OVERLAY */}
-                  <div
+                return (
+                  <a
+                    key={i}
+                    href={cert.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="
-                      absolute inset-0
-                      bg-gradient-to-t from-black/80 via-black/30 to-transparent
-                      opacity-0 group-hover:opacity-100
-                      transition-opacity duration-300
-                      flex flex-col justify-end p-6
+                      group relative
+                      min-w-[280px] h-[200px]
+                      md:min-w-[520px] md:h-[360px]
+                      rounded-2xl overflow-hidden
+                      shadow-[0_40px_80px_rgba(0,0,0,0.6)]
+                      transform transition-all duration-500
+                      hover:-translate-y-2 hover:rotate-[-0.5deg]
                     "
                   >
-                    <div className="text-xs uppercase tracking-widest text-white/70 mb-2">
-                      Verified Certificate
+                    {/* CERTIFICATE IMAGE */}
+                    <picture>
+                      {image.avif && <source type="image/avif" srcSet={image.avif} />}
+                      <source type="image/webp" srcSet={image.webp} />
+                      <img
+                        src={image.webp}
+                        alt={cert.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="
+                          w-full h-full object-contain
+                          bg-white
+                        "
+                      />
+                    </picture>
+
+                    {/* HOVER OVERLAY */}
+                    <div
+                      className="
+                        absolute inset-0
+                        bg-gradient-to-t from-black/80 via-black/30 to-transparent
+                        opacity-0 group-hover:opacity-100
+                        transition-opacity duration-300
+                        flex flex-col justify-end p-6
+                      "
+                    >
+                      <div className="text-xs uppercase tracking-widest text-white/70 mb-2">
+                        Verified Certificate
+                      </div>
+
+                      <h3 className="text-xl font-semibold leading-tight">
+                        {cert.title}
+                      </h3>
+
+                      <p className="text-sm text-white/70 mt-1">
+                        {cert.issuer}
+                      </p>
+
+                      <p className="text-xs text-white/50 mt-1">
+                        Issued {cert.date}
+                      </p>
+
+                      <span className="mt-4 inline-flex items-center gap-2 text-sm text-blue-400">
+                        View verification <span>↗</span>
+                      </span>
                     </div>
-
-                    <h3 className="text-xl font-semibold leading-tight">
-                      {cert.title}
-                    </h3>
-
-                    <p className="text-sm text-white/70 mt-1">
-                      {cert.issuer}
-                    </p>
-
-                    <p className="text-xs text-white/50 mt-1">
-                      Issued {cert.date}
-                    </p>
-
-                    <span className="mt-4 inline-flex items-center gap-2 text-sm text-blue-400">
-                      View verification <span>↗</span>
-                    </span>
-                  </div>
-                </a>
-              ))}
+                  </a>
+                );
+              })}
 
             </div>
           </div>
