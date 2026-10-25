@@ -84,7 +84,7 @@ export default function LeadershipCarousel() {
   useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.scrollLeft = data.length * CARD_WIDTH;
-  }, []);
+  }, [data.length, CARD_WIDTH]);
 
   // Continuous auto-scroll (moves left → cards slide right-to-left visually)
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function LeadershipCarousel() {
     };
     animRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animRef.current);
-  }, []);
+  }, [data.length, CARD_WIDTH]);
 
   const onEnter = useCallback(() => { pausedRef.current = true; }, []);
   const onLeave = useCallback(() => { pausedRef.current = false; }, []);
@@ -174,17 +174,17 @@ export default function LeadershipCarousel() {
                 w-[220px] h-[250px]
                 flex-shrink-0
                 rounded-2xl
-                bg-gradient-to-br from-[#0f1b34] to-[#0b1220]
-                border border-white/10
-                shadow-[0_20px_40px_rgba(0,0,0,0.5)]
+                bg-white dark:bg-[#151b2e]
+                border border-slate-200 dark:border-[#26324A]
+                shadow-sm dark:shadow-[0_20px_40px_rgba(0,0,0,0.5)]
                 p-5
                 flex flex-col
-                hover:-translate-y-1 hover:border-white/30
+                hover:-translate-y-1 hover:border-slate-300 dark:hover:border-white/30
                 transition-all duration-300
               "
             >
               {/* IMAGE */}
-              <div className="h-24 flex items-center justify-center mb-5 rounded-xl bg-white/[0.04] border border-white/10">
+              <div className="h-24 flex items-center justify-center mb-5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-100 dark:border-[#26324A]">
                 <picture>
                   <source type="image/avif" srcSet={item.image.avif} />
                   <source type="image/webp" srcSet={item.image.webp} />
@@ -200,13 +200,13 @@ export default function LeadershipCarousel() {
 
               {/* TEXT */}
               <div className="text-center mt-auto">
-                <div className="text-sm font-semibold text-white">
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                   {item.role}
                 </div>
-                <div className="text-xs text-white/60 mt-1">
+                <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
                   {item.org}
                 </div>
-                <div className="text-xs text-white/40 mt-1">
+                <div className="text-xs text-slate-400 dark:text-slate-400 mt-1">
                   {item.year}
                 </div>
               </div>

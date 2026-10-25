@@ -11,7 +11,7 @@ export default function CertificationsCarousel({ certifications }) {
   useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.scrollLeft = certifications.length * CARD_WIDTH;
-  }, [certifications.length]);
+  }, [certifications.length, CARD_WIDTH]);
 
   // Continuous auto-scroll (moves right → cards slide left)
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function CertificationsCarousel({ certifications }) {
     };
     animRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animRef.current);
-  }, [certifications.length]);
+  }, [certifications.length, CARD_WIDTH]);
 
   const onEnter = useCallback(() => { pausedRef.current = true; }, []);
   const onLeave = useCallback(() => { pausedRef.current = false; }, []);
@@ -64,14 +64,14 @@ export default function CertificationsCarousel({ certifications }) {
   ];
 
   return (
-    <section className="py-14 md:py-20 bg-[#0b0b0c] text-white relative overflow-hidden">
+    <section className="py-14 md:py-20 bg-white dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
 
-        <p className="font-mono text-xs text-slate-400 mb-2">
+        <p className="font-mono text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
           CERTIFICATIONS
         </p>
 
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-8 md:mb-10">
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-8 md:mb-10 text-slate-900 dark:text-slate-50">
           Technical Training & Credentials
         </h2>
 
@@ -80,11 +80,13 @@ export default function CertificationsCarousel({ certifications }) {
           {/* LEFT ARROW */}
           <button
             onClick={() => scroll(-1)}
+            aria-label="Previous certification"
             className="
               absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-10
-              bg-black/60 hover:bg-black/80
-              border border-white/10
-              p-2 md:p-3 rounded-full backdrop-blur
+              bg-white/90 dark:bg-black/60 hover:bg-white dark:hover:bg-black/80
+              text-slate-800 dark:text-slate-50
+              border border-slate-200 dark:border-[#26324A]
+              p-2 md:p-3 rounded-full backdrop-blur shadow-md transition-all
             "
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -97,11 +99,13 @@ export default function CertificationsCarousel({ certifications }) {
           {/* RIGHT ARROW */}
           <button
             onClick={() => scroll(1)}
+            aria-label="Next certification"
             className="
               absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-10
-              bg-black/60 hover:bg-black/80
-              border border-white/10
-              p-2 md:p-3 rounded-full backdrop-blur
+              bg-white/90 dark:bg-black/60 hover:bg-white dark:hover:bg-black/80
+              text-slate-800 dark:text-slate-50
+              border border-slate-200 dark:border-[#26324A]
+              p-2 md:p-3 rounded-full backdrop-blur shadow-md transition-all
             "
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"

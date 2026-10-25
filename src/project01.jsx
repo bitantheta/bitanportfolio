@@ -10,7 +10,7 @@ const ENVELOPE = [
   { oversize: 2.0, h2: 3.04, kwh: 64.99 }
 ];
 
-export function Project01() {
+export function Project01({ isDark = true }) {
   const plotRef = useRef(null);
 
   const [solar, setSolar] = useState(1.0);
@@ -61,7 +61,7 @@ export function Project01() {
           x: ENVELOPE.map(d => d.oversize),
           y: ENVELOPE.map(d => d.h2),
           mode: "lines",
-          line: { dash: "dash", color: "#22c55e", width: 3 },
+          line: { dash: "dash", color: "#10b981", width: 3 },
           name: "Physical envelope"
         },
         {
@@ -75,53 +75,64 @@ export function Project01() {
           x: [solar],
           y: [h2],
           mode: "markers",
-          marker: { size: 14, color: "#22c55e" },
+          marker: { size: 14, color: "#10b981" },
           name: "Operating point"
         }
       ],
       {
-        paper_bgcolor: "white",
-        plot_bgcolor: "white",
-        font: { color: "black" },
+        paper_bgcolor: "transparent",
+        plot_bgcolor: "transparent",
+        font: { color: isDark ? "#94a3b8" : "#475569", family: "inherit" },
         margin: { t: 20, l: 60, r: 20, b: 60 },
         xaxis: {
-          title: { text: "Solar oversizing ratio", standoff: 12 },
-          showgrid: false,
+          title: { text: "Solar oversizing ratio", standoff: 12, font: { color: isDark ? "#94a3b8" : "#475569", size: 12 } },
+          showgrid: true,
+          gridcolor: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)",
           zeroline: false,
-          showline: true
+          showline: true,
+          linecolor: isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)",
+          tickfont: { color: isDark ? "#94a3b8" : "#475569" }
         },
         yaxis: {
-          title: { text: "Hydrogen production (kg/day)", standoff: 12 },
-          showgrid: false,
+          title: { text: "Hydrogen production (kg/day)", standoff: 12, font: { color: isDark ? "#94a3b8" : "#475569", size: 12 } },
+          showgrid: true,
+          gridcolor: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)",
           zeroline: false,
-          showline: true
+          showline: true,
+          linecolor: isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)",
+          tickfont: { color: isDark ? "#94a3b8" : "#475569" }
         },
         legend: {
           orientation: "h",
           y: -0.28,
           x: 0.5,
-          xanchor: "center"
+          xanchor: "center",
+          font: { color: isDark ? "#cbd5e1" : "#334155", size: 11 }
         }
       },
       { displayModeBar: false, responsive: true }
     );
-  }, [solar, capacity, stack, cooling]);
+  }, [solar, capacity, stack, cooling, h2, h2Cap, isDark]);
 
   return (
-    <section className="py-16 md:py-24 bg-white text-black">
-      <div className="max-w-7xl mx-auto px-5 md:px-8">
+    <section className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+      {/* Ambient background glow */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
 
-        <p className="font-mono text-xs tracking-widest text-emerald-600 mb-4 uppercase">
-          PROJECT 01 
+      <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10">
+
+        <p className="font-mono text-xs tracking-widest text-emerald-600 dark:text-emerald-400 mb-3 uppercase flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
+          PROJECT 01
         </p>
 
-        <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
+        <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-slate-900 dark:text-slate-50">
           Solar-to-Hydrogen System Optimization
         </h2>
 
         {/* FULL-WIDTH DESCRIPTION */}
-        <div className="max-w-6xl bg-gradient-to-r from-emerald-50 to-transparent rounded-2xl p-6 md:p-8 mb-16 border-l-4 border-emerald-500">
-          <div className="text-gray-700 space-y-4 text-base md:text-lg leading-relaxed">
+        <div className="max-w-6xl bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-6 md:p-8 mb-14 border-l-4 border-l-emerald-500 shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="text-slate-600 dark:text-slate-300 space-y-4 text-base md:text-lg leading-relaxed font-light">
             <p>
               This project models and optimizes a solar-powered PEM electrolyzer system by
               coupling electrochemical performance, thermal behavior, and renewable energy
@@ -143,11 +154,37 @@ export function Project01() {
           </div>
         </div>
 
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
           {/* CONTROLS */}
-          <div className="lg:col-span-3 flex flex-col gap-6 lg:h-[420px] lg:justify-between">
+          <div className="lg:col-span-3 flex flex-col gap-5 lg:h-[420px] lg:justify-between bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 md:p-6 shadow-sm dark:shadow-none backdrop-blur-sm">
+            <div>
+              <p className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">Scenario Presets</p>
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                <button
+                  type="button"
+                  onClick={() => { setSolar(1.0); setCapacity(10); setStack(1.0); setCooling(1.0); }}
+                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                >
+                  Baseline
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSolar(1.8); setCapacity(25); setStack(1.2); setCooling(1.2); }}
+                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                >
+                  Solar Peak
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSolar(1.5); setCapacity(8); setStack(1.5); setCooling(0.6); }}
+                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-amber-500/20 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                >
+                  Thermal Limit
+                </button>
+              </div>
+            </div>
+
             {[
               ["Solar oversizing", solar, setSolar, 0.5, 2.0, 0.01],
               ["Electrolyzer capacity (MW)", capacity, setCapacity, 5, 30, 1],
@@ -155,47 +192,49 @@ export function Project01() {
               ["Cooling effectiveness", cooling, setCooling, 0.5, 1.5, 0.05]
             ].map(([label, v, set, min, max, step]) => (
               <div key={label}>
-                <div className="flex justify-between items-center text-sm mb-1">
-                  <span>{label}</span>
-                  <span className="text-black/60">{v.toFixed(2)}</span>
+                <div className="flex justify-between items-center text-sm mb-1.5">
+                  <span className="text-slate-700 dark:text-slate-300 text-xs md:text-sm">{label}</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-mono text-xs">{v.toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
+                  aria-label={label}
                   min={min}
                   max={max}
                   step={step}
                   value={v}
                   onChange={e => set(+e.target.value)}
-                  className="w-full accent-green-500"
+                  className="w-full accent-emerald-500 bg-slate-200 dark:bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
             ))}
           </div>
 
           {/* PLOT */}
-          <div className="lg:col-span-6 h-[320px] md:h-[420px] rounded-xl p-2 md:p-6">
+          <div className="lg:col-span-6 h-[340px] md:h-[420px] rounded-2xl p-2 md:p-4 bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none backdrop-blur-sm">
             <div ref={plotRef} className="w-full h-full" />
           </div>
 
           {/* KPIs */}
-          <div className="lg:col-span-3 flex flex-col gap-6 lg:h-[420px] lg:justify-between">
+          <div className="lg:col-span-3 flex flex-col gap-6 lg:h-[420px] lg:justify-between bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-6 shadow-sm dark:shadow-none backdrop-blur-sm">
             <div>
-              <div className="text-xs tracking-widest text-black/50">
-                OPTIMIZED RESULT
+              <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
+                Optimized Result
               </div>
-              <div className="text-6xl font-bold mt-2">
+              <div className="text-5xl md:text-6xl font-bold mt-3 text-slate-900 dark:text-slate-50 tracking-tight">
                 {eff.toFixed(1)}
-                <span className="text-2xl ml-2">kWh/kg H₂</span>
+                <span className="text-xl md:text-2xl ml-2 font-normal text-emerald-600 dark:text-emerald-400">kWh/kg H₂</span>
               </div>
             </div>
 
-            <div className="text-sm text-black/70">
-              Hydrogen output: <strong>{h2.toFixed(2)} kg/day</strong>
+            <div className="text-sm text-slate-600 dark:text-slate-300">
+              Hydrogen output: <strong className="text-slate-900 dark:text-slate-50 font-mono">{h2.toFixed(2)} kg/day</strong>
             </div>
 
             <div className="text-sm">
-              Limiting constraint:
-              <div className="font-semibold text-green-600">
+              <span className="text-slate-500 dark:text-slate-400">Limiting constraint:</span>
+              <div className="font-semibold text-emerald-600 dark:text-emerald-400 text-base mt-1 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                 {regime}
               </div>
             </div>
@@ -204,9 +243,10 @@ export function Project01() {
               href="https://bitantheta.github.io/renewable-hydrogen-system/index.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-b border-black/40 hover:border-black"
+              className="inline-flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition group border-b border-emerald-500/30 hover:border-emerald-500 pb-0.5 w-fit"
             >
-              Inspect full interactive model ↗
+              <span>Inspect full interactive model</span>
+              <span className="group-hover:translate-x-0.5 transition-transform">↗</span>
             </a>
           </div>
 

@@ -13,9 +13,27 @@ const assetUrl = (relativePath) => {
   const cleanPath = relativePath.replace(/^\//, "");
   return cdnBase ? `${cdnBase}/${cleanPath}` : `${import.meta.env.BASE_URL}${cleanPath}`;
 };
+const resumeUrl = `${import.meta.env.BASE_URL}Resume-Bitan-Mukherjee.pdf`;
 
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+const roles = ["Process Modelling", "System Simulation", "CFD Analysis", "Reactor Modelling", "Feature Engineering", "Flow Simulation"];
+
+const THEME_STORAGE_KEY = "portfolio_theme";
+
+function getInitialTheme() {
+  if (typeof window === "undefined") return "dark";
+
+  try {
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+  } catch {
+    // Fall through to the system preference when storage is unavailable.
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 export default function App() {
   const juLogo = assetUrl("assets/ju-512.webp");
@@ -23,7 +41,6 @@ export default function App() {
   const izmirLogo = assetUrl("assets/izmir-512.webp");
   const iiscLogo = assetUrl("assets/iisc-512.webp");
   const iimLogo = assetUrl("assets/iim-512.webp");
-  const bmLogo = assetUrl("assets/bmlogo-768.webp");
   const myPhoto = {
     avif900: assetUrl("assets/me-900.avif"),
     webp900: assetUrl("assets/me-900.webp"),
@@ -32,18 +49,6 @@ export default function App() {
   };
 
   const nameRef = useRef(null);
-  const textRef = useRef(null);
-
-  const [current, setCurrent] = useState(8000);
-const [cooling, setCooling] = useState(0.7);
-
-const thermalActive = current > 7000 && cooling < 0.8;
-const specificEnergy = thermalActive ? 82.9 : 78.5;
-
-  const [flow, setFlow] = useState(245);
-  const [power, setPower] = useState(18);
-  const [safety, setSafety] = useState(60);
-
 
   const researchTitleRef = useRef(null);
   const cardsRef = useRef([]);
@@ -53,15 +58,6 @@ const specificEnergy = thermalActive ? 82.9 : 78.5;
   const dpRef = useRef(null);
   const costRef = useRef(null);
   const metricCardsRef = useRef([]);
-
-  const [activeRoute, setActiveRoute] = useState("h2");
-
-  const [year, setYear] = useState(2030);
-  const pathwayStrength = {
-  ccus: Math.max(0, 1 - (year - 2025) / 20),      // fades after 2040
-  hybrid: Math.exp(-Math.pow((year - 2032) / 7, 2)), // peaks ~2032
-  h2: Math.min(1, (year - 2030) / 15),            // dominates post-2045
-};
 
   const timelineRef = useRef(null);
   const timelineLineRef = useRef(null);
@@ -80,23 +76,46 @@ const specificEnergy = thermalActive ? 82.9 : 78.5;
   const projectsTriggerRef = useRef(null);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  const isDark = theme === "dark";
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("dark", isDark);
+    root.style.colorScheme = theme;
+
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    themeColor?.setAttribute("content", isDark ? "#0b1020" : "#f8fafc");
+
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Browsers can disable storage; the in-session toggle should still work.
+    }
+  }, [theme, isDark]);
+
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("hero");
   const [roleIndex, setRoleIndex] = useState(0);
-  const [showSplash, setShowSplash] = useState(true);
-  const [logoLoaded, setLogoLoaded] = useState(false);
-  const splashRef = useRef(null);
   const [loadProjectVisuals, setLoadProjectVisuals] = useState(false);
   const [loadCarousels, setLoadCarousels] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
-  const roles = ["Process Modelling", "System Simulation", "CFD Analysis", "Reactor Modelling", "Feature Engineering", "Flow Simulation"];
+  const copyEmail = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText("bitanm.chem.ug@jadavpuruniversity.in");
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    }
+  };
 
   const project2Ref = useRef(null);
   const pipelineCardsRef = useRef([]);
-  const selectedDesignRef = useRef(null);
-  const skillCardsRef = useRef([]);
-  const [activeStepIndex, setActiveStepIndex] = useState(-1);
-  const [activeSkillIndex, setActiveSkillIndex] = useState(-1);
 
   const certifications = [
   {
@@ -162,87 +181,14 @@ const specificEnergy = thermalActive ? 82.9 : 78.5;
 ];
 
 
-  const feasibleWidth = Math.max(120, power * 8);
-const feasibleHeight = Math.max(80, safety * 1.2);
-
-const feasiblePath = `
-  M80 ${260 - feasibleHeight}
-  Q200 ${240 - feasibleHeight} ${80 + feasibleWidth} 160
-  L${80 + feasibleWidth} 260
-  L80 260 Z
-`;
-
-const cx = 80 + ((flow - 180) / 140) * feasibleWidth;
-const cy = 260 - feasibleHeight * 0.6;
-
-
-
   const scrollToSection = (id) => {
-  gsap.to(window, {
-    duration: 1.2,
-    scrollTo: { y: `#${id}`, offsetY: 40, autoKill: true },
-    ease: "power3.inOut",
-    overwrite: true,
-  });
-};
-
-function Slider({ label, unit, min, max, value, onChange }) {
-  return (
-    <div>
-      <label className="block text-sm text-white/70 mb-2">
-        {label}
-      </label>
-
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-cyan-400"
-      />
-
-      <div className="mt-1 text-xs text-white/40">
-        {value} {unit}
-      </div>
-    </div>
-  );
-}
-
-
-
-const experiences = [
-  {
-    org: "Indian Institute of Management, Ranchi",
-    role: "Remote Research Intern",
-    period: "Dec 2024 – Feb 2025",
-    position: "up",
-    points: [
-      "LSTM and GNN-based models for cybersecurity risk forecasting",
-      "Feature extraction, anomaly scoring, attention pipelines",
-    ],
-  },
-  {
-    org: "Izmir Institute of Technology, Türkiye",
-    role: "Research Assistant",
-    period: "Mar 2025 – Present",
-    position: "down",
-    points: [
-      "Physics-informed neural networks for kinetics and PBEs",
-      "ODE constraints, conservation laws, equilibrium enforcement",
-    ],
-  },
-  {
-    org: "Indian Institute of Science, Bangalore",
-    role: "Summer Research Intern",
-    period: "June – July 2025",
-    position: "up",
-    points: [
-      "Top 1% nationwide (fully funded NPTEL internship)",
-      "Graph-based optimization (MST) for engineering systems",
-    ],
-  },
-];
+    gsap.to(window, {
+      duration: 1.2,
+      scrollTo: { y: `#${id}`, offsetY: window.innerWidth >= 768 ? 88 : 40, autoKill: true },
+      ease: "power3.inOut",
+      overwrite: true,
+    });
+  };
 
 // Role rotation interval
 useEffect(() => {
@@ -251,22 +197,6 @@ useEffect(() => {
   }, 2500);
   return () => clearInterval(timer);
 }, []);
-
-// Splash screen - wait for logo then fade out with CSS
-useEffect(() => {
-  if (!logoLoaded || !splashRef.current) return;
-  
-  // Add CSS fade-out class after brief display
-  const timer = setTimeout(() => {
-    if (splashRef.current) {
-      splashRef.current.classList.add('splash-fade-out');
-      // Remove from DOM after animation
-      setTimeout(() => setShowSplash(false), 800);
-    }
-  }, 1200);
-  
-  return () => clearTimeout(timer);
-}, [logoLoaded]);
 
 useEffect(() => {
   const observers = [];
@@ -358,24 +288,6 @@ useEffect(() => {
       scrub: true,
     },
   });
-
-  // ===============================
-  // HERO — SCROLL OUT
-  // ===============================
-  gsap.fromTo(
-    [nameRef.current, textRef.current],
-    { opacity: 1, y: 0 },
-    {
-      opacity: 0,
-      y: -40,
-      scrollTrigger: {
-        trigger: heroSectionRef.current,
-        start: "bottom top",
-        end: "bottom+=200 top",
-        scrub: true,
-      },
-    }
-  );
 
   // ===============================
   // RESEARCH TITLE
@@ -503,7 +415,7 @@ useEffect(() => {
   // ===============================
   if (typeof window !== "undefined" && window.innerWidth < 768) {
     const skillCards = document.querySelectorAll("[data-skill-card]");
-    skillCards.forEach((card, idx) => {
+    skillCards.forEach((card) => {
       ScrollTrigger.create({
         trigger: card,
         start: "top 70%",
@@ -516,7 +428,7 @@ useEffect(() => {
     });
 
     // Pipeline cards (Project 2)
-    pipelineCardsRef.current.forEach((card, idx) => {
+    pipelineCardsRef.current.forEach((card) => {
       if (!card) return;
       ScrollTrigger.create({
         trigger: card,
@@ -656,25 +568,7 @@ useEffect(() => {
   
 
    return (
-    <div className="bg-[#f6f7f9]">
-
-    {/* ========== SPLASH SCREEN ========== */}
-    {showSplash && (
-      <div
-        ref={splashRef}
-        className="fixed inset-0 z-[10000] bg-black flex items-center justify-center"
-      >
-        <img
-          src={bmLogo}
-          alt="Logo"
-          onLoad={() => setLogoLoaded(true)}
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          className={`splash-logo w-64 h-64 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] object-contain transition-opacity duration-300 ${logoLoaded ? 'opacity-100' : 'opacity-0'}`}
-        />
-      </div>
-    )}
+    <div className="app-shell bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-zinc-100 selection:bg-cyan-500/30 selection:text-cyan-900 dark:selection:text-cyan-200 min-h-screen transition-colors duration-300">
 
     {/* ========== SCROLL PROGRESS BAR ========== */}
     <div className="fixed top-0 left-0 w-full h-[2px] z-[9998]">
@@ -684,8 +578,6 @@ useEffect(() => {
       />
     </div>
 
-    {/* Section nav dots removed */}
-
     {/* Custom cursor — hidden on touch devices */}
 <div
   ref={cursorRef}
@@ -694,7 +586,7 @@ useEffect(() => {
     top-0 left-0
     w-4 h-4
     rounded-full
-    bg-white
+    bg-slate-900 dark:bg-white
     pointer-events-none
     z-[9999]
     mix-blend-difference
@@ -706,7 +598,7 @@ useEffect(() => {
 <section
   id="hero"
   ref={heroSectionRef}
-  className="h-screen relative overflow-hidden bg-[#0b0b0c] text-white"
+  className="h-screen relative overflow-hidden bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 transition-colors duration-300"
 >
   {/* Grain texture overlay */}
   <div className="grain-overlay" />
@@ -717,27 +609,27 @@ useEffect(() => {
     <div ref={mobileHeroRef} className="relative z-10">
 
       {/* Greeting */}
-      <p className="text-base text-white/60 mb-3 font-light">
+      <p className="text-base text-slate-600 dark:text-slate-300 mb-3 font-light">
         Hi, I am
       </p>
 
       {/* Name */}
-      <h1 className="font-bold tracking-[-0.04em] leading-[0.88] text-[15vw] text-white mb-6">
+      <h1 className="font-bold tracking-[-0.04em] leading-[0.88] text-[15vw] text-slate-900 dark:text-slate-50 mb-6">
         Bitan<br />Mukherjee
       </h1>
 
       {/* Accent rule */}
-      <div className="w-10 h-[1px] bg-white/20 mb-4 origin-left" />
+      <div className="w-10 h-[1px] bg-slate-300 dark:bg-white/20 mb-4 origin-left" />
 
       {/* Rotating role label */}
-      <p className="font-mono text-xs tracking-[0.2em] uppercase text-blue-400 mb-3 h-5 overflow-hidden">
+      <p className="font-mono text-xs tracking-[0.2em] uppercase text-cyan-600 dark:text-cyan-400 mb-3 h-5 overflow-hidden">
         <span key={roleIndex} className="inline-block animate-[fadeSlideUp_0.1s_ease-out]">
           {roles[roleIndex]}
         </span>
       </p>
 
       {/* Brief one-liner */}
-      <p className="text-sm text-white/40 font-light leading-relaxed max-w-[280px]">
+      <p className="text-sm text-slate-600 dark:text-slate-400 font-light leading-relaxed max-w-[280px]">
       Undergraduate student exploring computational approaches to process and fluid engineering.
       </p>
 
@@ -747,7 +639,7 @@ useEffect(() => {
           href="https://www.linkedin.com/in/bitanmukherjee"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white/40 hover:text-white transition-colors duration-300"
+          className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"
           aria-label="LinkedIn"
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -756,7 +648,7 @@ useEffect(() => {
         </a>
         <a
           href="mailto:bitanmukherjee3741@gmail.com"
-          className="text-white/40 hover:text-white transition-colors duration-300"
+          className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"
           aria-label="Email"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -766,20 +658,50 @@ useEffect(() => {
       </div>
     </div>
 
-    {/* Floating hamburger button — top right */}
-    <button
-      onClick={() => setMenuOpen(!menuOpen)}
-      className="absolute top-8 right-6 z-30 w-10 h-10 flex flex-col items-center justify-center gap-[5px] bg-transparent border-none cursor-pointer"
-      aria-label="Menu"
-    >
-      <span className={`block w-5 h-[1.5px] bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
-      <span className={`block w-5 h-[1.5px] bg-white transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-      <span className={`block w-5 h-[1.5px] bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
-    </button>
+    {/* Mobile top-right controls: Theme toggle + hamburger */}
+    <div className="fixed top-4 right-4 z-[60] flex items-center gap-3 md:hidden">
+      {/* Mobile Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        type="button"
+        aria-label={`Switch from ${theme} mode to ${isDark ? "light" : "dark"} mode`}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium
+          bg-slate-200/90 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20
+          text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-[#26324A]
+          transition cursor-pointer shadow-sm"
+      >
+        {isDark ? (
+          <>
+            <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+            <span>LIGHT</span>
+          </>
+        ) : (
+          <>
+            <svg className="w-3.5 h-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+            <span>DARK</span>
+          </>
+        )}
+      </button>
+
+      {/* Floating hamburger button */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="w-10 h-10 flex flex-col items-center justify-center gap-[5px] bg-transparent border-none cursor-pointer"
+        aria-label="Menu"
+      >
+        <span className={`block w-5 h-[1.5px] bg-slate-900 dark:bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+        <span className={`block w-5 h-[1.5px] bg-slate-900 dark:bg-white transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+        <span className={`block w-5 h-[1.5px] bg-slate-900 dark:bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+      </button>
+    </div>
 
     {/* Mobile menu overlay */}
     {menuOpen && (
-      <div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center gap-6">
+      <div className="fixed inset-0 z-50 bg-white/95 dark:bg-[#0b1020]/95 backdrop-blur-md flex flex-col items-center justify-center gap-6">
         {[
           { label: "Skills", id: "skills" },
           { label: "Experience", id: "experience" },
@@ -789,16 +711,18 @@ useEffect(() => {
           <button
             key={item.label}
             onClick={() => { setMenuOpen(false); scrollToSection(item.id); }}
-            className="text-2xl font-light text-white/70 hover:text-white transition tracking-wide bg-transparent border-none cursor-pointer"
+            className={`text-2xl font-light transition tracking-wide bg-transparent border-none cursor-pointer ${
+              activeSection === item.id ? "text-slate-900 dark:text-slate-50 font-medium underline underline-offset-8 decoration-cyan-500" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+            }`}
           >
             {item.label}
           </button>
         ))}
         <a
-          href="https://drive.google.com/file/d/1fbpHl7BmBZwMsXZTrt-OsS7mq2xjgQA1/view?usp=sharing"
+          href={resumeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-2xl font-light text-white/70 hover:text-white transition tracking-wide"
+          className="text-2xl font-light text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition tracking-wide"
           onClick={() => setMenuOpen(false)}
         >
           CV ↗
@@ -808,14 +732,14 @@ useEffect(() => {
 
     {/* Scroll indicator — bottom center */}
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-      <div className="w-[1px] h-8 bg-gradient-to-b from-white/25 to-transparent animate-pulse" />
+      <div className="w-[1px] h-8 bg-gradient-to-b from-slate-400 dark:from-white/25 to-transparent animate-pulse" />
     </div>
   </div>
 
-  {/* ================= DESKTOP HERO (unchanged) ================= */}
+  {/* ================= DESKTOP HERO ================= */}
 
 {/* DESKTOP NAV — hidden on mobile */}
-<nav className="absolute top-10 right-10 hidden md:flex gap-10 text-lg md:text-xl font-light text-white/50">
+<nav className="fixed top-5 right-5 hidden md:flex items-center gap-5 rounded-full border border-slate-200/80 dark:border-[#334155] bg-white/80 dark:bg-[#10172a]/90 px-5 py-2.5 text-sm lg:text-base font-light text-slate-600 dark:text-slate-300 shadow-lg shadow-slate-900/5 dark:shadow-black/25 backdrop-blur-xl z-[60]">
 
   {/* Internal sections */}
   {[
@@ -827,12 +751,12 @@ useEffect(() => {
     <button
       key={item.label}
       onClick={() => scrollToSection(item.id)}
-      className="group flex items-center gap-2 tracking-wide
-                 hover:text-white transition
-                 bg-transparent border-none cursor-pointer"
+      className={`group flex items-center gap-1.5 tracking-wide transition bg-transparent border-none cursor-pointer ${
+        activeSection === item.id ? "text-slate-900 dark:text-slate-50 font-normal" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+      }`}
     >
       {item.label}
-      <span className="inline-block text-[1.1em] transform group-hover:translate-x-1 transition">
+      <span className="inline-block text-[1.05em] transform group-hover:translate-x-0.5 transition">
         ↗
       </span>
     </button>
@@ -840,26 +764,52 @@ useEffect(() => {
 
   {/* CV — external */}
   <a
-    href="https://drive.google.com/file/d/1fbpHl7BmBZwMsXZTrt-OsS7mq2xjgQA1/view?usp=sharing"
+    href={resumeUrl}
     target="_blank"
     rel="noopener noreferrer"
-    className="group flex items-center gap-2 tracking-wide
-               hover:text-white transition"
+    className="group flex items-center gap-1.5 tracking-wide text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
   >
     CV
-    <span className="inline-block text-[1.1em] transform group-hover:translate-x-1 transition">
+    <span className="inline-block text-[1.05em] transform group-hover:translate-x-0.5 transition">
       ↗
     </span>
   </a>
+
+  {/* THEME TOGGLE BUTTON IN HERO */}
+  <button
+    onClick={toggleTheme}
+    type="button"
+    aria-label={`Switch from ${theme} mode to ${isDark ? "light" : "dark"} mode`}
+    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider transition-all duration-300
+      bg-slate-200/80 dark:bg-white/[0.06] hover:bg-slate-300 dark:hover:bg-white/15
+      text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-[#26324A]
+      shadow-sm hover:scale-105 active:scale-95 cursor-pointer ml-2"
+  >
+    {isDark ? (
+      <>
+        <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+        </svg>
+        <span>LIGHT</span>
+      </>
+    ) : (
+      <>
+        <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+        <span>DARK</span>
+      </>
+    )}
+  </button>
 
 </nav>
 
 
   {/* ================= MASSIVE NAME (desktop only) ================= */}
-  <div className="absolute bottom-[6vh] left-0 w-full px-6 md:px-10 hidden md:block">
+  <div className="absolute bottom-[6vh] left-0 w-full px-6 md:px-10 hidden md:block z-10">
 
     {/* Mono label */}
-    <p className="font-mono text-sm md:text-base tracking-[0.4em] text-white/80 mb-4">
+    <p className="font-mono text-sm md:text-base tracking-[0.4em] text-slate-500 dark:text-slate-300 mb-4">
       Hi, I am
     </p>
 
@@ -872,7 +822,8 @@ useEffect(() => {
         text-[16vw] lg:text-[18vw]
         w-full
         select-none
-        text-white
+        text-slate-900 dark:text-slate-50
+        transition-colors duration-300
       "
     >
       Bitan
@@ -886,21 +837,21 @@ useEffect(() => {
 
 
 {/* ================= ABOUT ME (right after hero) ================= */}
-<section id="about" className="py-12 md:py-20 bg-[#f6f7f9]">
+<section id="about" className="py-20 md:py-28 bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
 
     {/* LEFT — TEXT + CARDS (VERTICALLY CENTERED) */}
     <div className="lg:col-span-8 flex items-center">
       <div className="w-full">
 
-        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 md:mb-3">
+        <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-slate-50 tracking-tight mb-2 md:mb-3">
           About Me
         </h2>
-        <p className="text-sm md:text-base text-gray-400 font-light mb-6 md:mb-8">
+        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-light mb-6 md:mb-8">
           A bit about who I am and what I do.
         </p>
 
-        <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-8 md:mb-12 max-w-3xl font-light">
+        <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-8 md:mb-12 max-w-3xl font-light">
           Hi! I am a third-year Chemical Engineering undergraduate.
 I like working with processes, models, and systems that make sense in the real world.
 Most of my time goes into projects, simulations, and research that sit somewhere between theory and practice.
@@ -911,60 +862,60 @@ I am still learning and trying to create social impact.
         <div className="flex flex-col gap-4 sm:hidden">
 
           {/* AGE */}
-          <div className="flex items-center gap-5 bg-white rounded-2xl p-5 shadow-sm">
-            <div className="text-5xl font-bold text-gray-900 leading-none">21</div>
+          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
+            <div className="text-5xl font-bold text-slate-900 dark:text-slate-50 leading-none">22</div>
             <div>
-              <div className="text-xs tracking-widest text-gray-400 mb-1">AGE</div>
-              <p className="text-sm text-gray-600">Born and brought up in Kolkata, India.</p>
+              <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 mb-1">AGE</div>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Born and brought up in Kolkata, India.</p>
             </div>
           </div>
 
           {/* CURRENT */}
-          <div className="flex items-center gap-5 bg-white rounded-2xl p-5 shadow-sm">
-            <img src={juLogo} alt="Jadavpur University" loading="lazy" decoding="async" className="w-12 h-14 object-contain flex-shrink-0" />
+          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
+            <div className="logo-surface w-14 h-14 flex-shrink-0"><img src={juLogo} alt="Jadavpur University" loading="lazy" decoding="async" className="w-12 h-12 object-contain" /></div>
             <div>
-              <div className="text-xs tracking-widest text-gray-400 mb-1">CURRENT</div>
-              <div className="text-base font-semibold text-gray-900">Chemical Engineering</div>
-              <p className="text-xs text-gray-500 mt-1">Fluid Mechanics, Heat Transfer, Transport Phenomena, Reaction Engineering, Thermodynamics</p>
+              <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 mb-1">CURRENT</div>
+              <div className="text-base font-semibold text-slate-900 dark:text-slate-50">Senior, Chemical Engineering</div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Fluid Mechanics, Heat Transfer, Transport Phenomena, Reaction Engineering, Thermodynamics</p>
             </div>
           </div>
 
-          {/* UPCOMING */}
-          <div className="flex items-center gap-5 bg-white rounded-2xl p-5 shadow-sm">
-            <img src={abInbevLogo} alt="AB InBev" loading="lazy" decoding="async" className="w-20 h-10 object-contain flex-shrink-0" />
+          {/* AB INBEV */}
+          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
+            <div className="logo-surface w-20 h-12 flex-shrink-0"><img src={abInbevLogo} alt="AB InBev" loading="lazy" decoding="async" className="w-16 h-8 object-contain" /></div>
             <div>
-              <div className="text-xs tracking-widest text-gray-400 mb-1">UPCOMING</div>
-              <div className="text-base font-semibold text-gray-900">Summer Internship, AB InBev India</div>
-              <p className="text-xs text-gray-500 mt-1">Supply Chain Excellence Trainee in Summer 2026</p>
+              <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 mb-1">UPCOMING</div>
+              <div className="text-base font-semibold text-slate-900 dark:text-slate-50">SET at AB InBev India</div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Supply Excellence Program · May–Jul 2026</p>
             </div>
           </div>
         </div>
 
         {/* ========== DESKTOP FLIP CARDS (hover works) ========== */}
-        <div className="hidden sm:grid sm:grid-cols-3 gap-8">
+        <div className="hidden sm:grid sm:grid-cols-3 gap-6 lg:gap-8">
 
           {/* AGE */}
           <div className="flip-card h-[260px]">
             <div className="flip-card-inner">
 
               {/* FRONT */}
-              <div className="flip-card-face bg-white p-10 flex flex-col justify-between text-center shadow-sm">
-                <div className="text-sm tracking-widest text-gray-400">
+              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
+                <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                   AGE
                 </div>
 
                 <div className="flex-grow flex items-center justify-center">
-                  <div className="text-7xl font-bold text-gray-900">
-                    21
+                  <div className="text-7xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
+                    22
                   </div>
                 </div>
 
-                <div className="h-6" />
+                <div className="h-4" />
               </div>
 
               {/* BACK */}
-              <div className="flip-card-face flip-card-back bg-gray-900 p-10 flex items-center justify-center text-center text-white">
-                <p className="text-sm leading-relaxed text-white/80">
+              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151b2e] border border-cyan-500/40 rounded-2xl p-8 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
+                <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200 font-light">
                   Born and brought up in Kolkata, India.
                 </p>
               </div>
@@ -977,8 +928,8 @@ I am still learning and trying to create social impact.
             <div className="flip-card-inner">
 
               {/* FRONT */}
-              <div className="flip-card-face bg-white p-10 flex flex-col justify-between text-center shadow-sm">
-                <div className="text-sm tracking-widest text-gray-400">
+              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
+                <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                   CURRENT 
                 </div>
 
@@ -988,32 +939,35 @@ I am still learning and trying to create social impact.
                     alt="Jadavpur University"
                     loading="lazy"
                     decoding="async"
-                    className="w-16 h-20 object-contain mb-4"
+                    className="logo-surface w-16 h-16 p-1 mb-3"
                   />
-                  <div className="text-xl font-semibold text-gray-900">
+                  <div className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+                    Senior,
+                    <br />
                     Chemical Engineering
                   </div>
                 </div>
 
-                <div className="h-6" />
+                <div className="h-4" />
               </div>
 
               {/* BACK */}
-              <div className="flip-card-face flip-card-back bg-gray-900 p-8 flex items-center justify-center text-center text-white">
-                <p className="text-sm text-white/80 leading-relaxed">
-                  Courses taken: Fluid Mechanics, Heat Transfer, Transport Phenomena, Reaction Engineering, Chemical Engineering Thermodynamics</p>
+              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151b2e] border border-cyan-500/40 rounded-2xl p-6 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
+                <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300 font-light">
+                  Courses taken: Fluid Mechanics, Heat Transfer, Transport Phenomena, Reaction Engineering, Chemical Engineering Thermodynamics
+                </p>
               </div>
 
             </div>
           </div>
 
-          {/* UPCOMING */}
+          {/* AB INBEV */}
           <div className="flip-card h-[260px]">
             <div className="flip-card-inner">
 
               {/* FRONT */}
-              <div className="flip-card-face bg-white p-10 flex flex-col justify-between text-center shadow-sm">
-                <div className="text-sm tracking-widest text-gray-400">
+              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
+                <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                   UPCOMING
                 </div>
 
@@ -1023,22 +977,22 @@ I am still learning and trying to create social impact.
                     alt="AB InBev"
                     loading="lazy"
                     decoding="async"
-                    className="w-32 h-16 object-contain mb-4"
+                    className="logo-surface w-28 h-14 p-2 mb-3"
                   />
-                  <div className="text-xl font-semibold text-gray-900 leading-snug">
-                    Summer Internship,
+                  <div className="text-lg font-semibold text-slate-900 dark:text-slate-50 leading-snug">
+                    SET at
                     <br />
                     AB InBev India
                   </div>
                 </div>
 
-                <div className="h-6" />
+                <div className="h-4" />
               </div>
 
               {/* BACK */}
-              <div className="flip-card-face flip-card-back bg-gray-900 p-8 flex items-center justify-center text-center text-white">
-                <p className="text-sm text-white/80 leading-relaxed">
-                  Will be working as a Supply Chain Excellence Trainee at ABInBEV India in Summer 2026 as a part of their Internship Programme.
+              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151b2e] border border-cyan-500/40 rounded-2xl p-6 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
+                <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300 font-light">
+                  Completed the Supply Excellence Program as a SET Intern, collaborating across functions on operational workflows and process-improvement solutions.
                 </p>
               </div>
 
@@ -1050,9 +1004,9 @@ I am still learning and trying to create social impact.
       </div>
     </div>
 
-    {/* RIGHT — PHOTO (UNCHANGED) */}
+    {/* RIGHT — PHOTO */}
     <div className="lg:col-span-4 flex justify-center lg:justify-end">
-      <div className="w-full max-w-[320px] h-[400px] sm:max-w-[400px] sm:h-[500px] lg:max-w-[500px] lg:h-[600px] rounded-[2rem] bg-gray-200 overflow-hidden">
+      <div className="w-full max-w-[320px] h-[400px] sm:max-w-[400px] sm:h-[500px] lg:max-w-[500px] lg:h-[600px] rounded-[2rem] bg-slate-100 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] overflow-hidden shadow-xl dark:shadow-2xl">
         <picture>
           <source
             type="image/avif"
@@ -1080,20 +1034,20 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= SKILLS ================= */}
-<section id="skills" className="relative py-20 md:py-28 overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #0d1117 40%, #101820 100%)' }}>
+<section id="skills" className="relative py-20 md:py-28 overflow-hidden bg-slate-50 dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] transition-colors duration-300">
 
   {/* Subtle grid pattern overlay */}
-  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: isDark ? 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)' : 'radial-gradient(circle, rgba(0,0,0,0.4) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
   <div className="relative max-w-[90%] xl:max-w-7xl mx-auto px-5 md:px-8">
 
-    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-blue-400/60 mb-4">
+    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-cyan-600 dark:text-cyan-400 mb-4">
       What I work with
     </p>
-    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-white">
+    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-slate-900 dark:text-slate-50">
       Skills &amp; Tools
     </h2>
-    <p className="text-sm md:text-base text-white/35 font-light mb-12 md:mb-16 max-w-lg">
+    <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 font-light mb-12 md:mb-16 max-w-lg">
       From physics-based modeling to machine learning, the tools I use to solve real-world problems.
     </p>
 
@@ -1102,63 +1056,63 @@ I am still learning and trying to create social impact.
       className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6"
     >
       {/* MODELING & SIMULATION */}
-      <div data-skill-card data-skill-color="blue" className="group relative rounded-2xl border border-white/10 bg-[#12141a] p-7 md:p-8 hover:border-blue-500/60 hover:bg-[#161a24] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] [&.mobile-glow-active]:border-blue-500/60 [&.mobile-glow-active]:bg-[#161a24] [&.mobile-glow-active]:shadow-[0_0_40px_rgba(59,130,246,0.2)]">
+      <div data-skill-card data-skill-color="blue" className="group relative rounded-2xl border border-slate-200 dark:border-[#26324A] bg-white dark:bg-[#151b2e] p-7 md:p-8 hover:border-blue-500/60 hover:bg-slate-50 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] [&.mobile-glow-active]:border-blue-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1a2338]">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
-          <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center mb-5 group-hover:bg-blue-500/30 group-hover:scale-105 transition-all duration-300">
-            <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <div className="w-11 h-11 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center mb-5 group-hover:bg-blue-500/25 group-hover:scale-105 transition-all duration-300">
+            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold mb-2 text-white">Modeling &amp; Simulation</h3>
-          <p className="text-sm text-white/50 mb-5 leading-relaxed">
+          <h3 className="text-lg font-semibold mb-2 text-slate-900 dark:text-slate-50">Modeling &amp; Simulation</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-5 leading-relaxed">
             System modeling across fluid, thermal, and reactive domains.
           </p>
           <div className="flex flex-wrap gap-2">
             {["Fluid Flow", "Heat Transfer", "Reaction Kinetics", "Transport Phenomena", "CFD"].map(s => (
-              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25 hover:bg-blue-500/30 hover:border-blue-400/50 transition-all duration-200 cursor-default">{s}</span>
+              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-blue-500/10 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/20 dark:border-blue-500/25 hover:bg-blue-500/20 transition-all duration-200 cursor-default">{s}</span>
             ))}
           </div>
         </div>
       </div>
 
       {/* MACHINE LEARNING */}
-      <div data-skill-card data-skill-color="purple" className="group relative rounded-2xl border border-white/10 bg-[#12141a] p-7 md:p-8 hover:border-purple-500/60 hover:bg-[#161a24] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(147,51,234,0.2)] [&.mobile-glow-active]:border-purple-500/60 [&.mobile-glow-active]:bg-[#161a24] [&.mobile-glow-active]:shadow-[0_0_40px_rgba(147,51,234,0.2)]">
+      <div data-skill-card data-skill-color="purple" className="group relative rounded-2xl border border-slate-200 dark:border-[#26324A] bg-white dark:bg-[#151b2e] p-7 md:p-8 hover:border-purple-500/60 hover:bg-slate-50 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(147,51,234,0.15)] [&.mobile-glow-active]:border-purple-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1a2338]">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
-          <div className="w-11 h-11 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-5 group-hover:bg-purple-500/30 group-hover:scale-105 transition-all duration-300">
-            <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <div className="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mb-5 group-hover:bg-purple-500/25 group-hover:scale-105 transition-all duration-300">
+            <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold mb-2 text-white">Machine Learning</h3>
-          <p className="text-sm text-white/50 mb-5 leading-relaxed">
+          <h3 className="text-lg font-semibold mb-2 text-slate-900 dark:text-slate-50">Machine Learning</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-5 leading-relaxed">
             Physics-constrained neural networks, forecasting, and optimization.
           </p>
           <div className="flex flex-wrap gap-2">
             {["PINNs", "LSTM", "Constrained Learning", "GNNs", "Optimization"].map(s => (
-              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25 hover:bg-purple-500/30 hover:border-purple-400/50 transition-all duration-200 cursor-default">{s}</span>
+              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-purple-500/10 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20 dark:border-purple-500/25 hover:bg-purple-500/20 transition-all duration-200 cursor-default">{s}</span>
             ))}
           </div>
         </div>
       </div>
 
       {/* TOOLS & LANGUAGES */}
-      <div data-skill-card data-skill-color="emerald" className="group relative rounded-2xl border border-white/10 bg-[#12141a] p-7 md:p-8 hover:border-emerald-500/60 hover:bg-[#161a24] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(16,185,129,0.2)] [&.mobile-glow-active]:border-emerald-500/60 [&.mobile-glow-active]:bg-[#161a24] [&.mobile-glow-active]:shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+      <div data-skill-card data-skill-color="emerald" className="group relative rounded-2xl border border-slate-200 dark:border-[#26324A] bg-white dark:bg-[#151b2e] p-7 md:p-8 hover:border-emerald-500/60 hover:bg-slate-50 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] [&.mobile-glow-active]:border-emerald-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1a2338]">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mb-5 group-hover:bg-emerald-500/30 group-hover:scale-105 transition-all duration-300">
-            <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <div className="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-5 group-hover:bg-emerald-500/25 group-hover:scale-105 transition-all duration-300">
+            <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold mb-2 text-white">Tools &amp; Languages</h3>
-          <p className="text-sm text-white/50 mb-5 leading-relaxed">
+          <h3 className="text-lg font-semibold mb-2 text-slate-900 dark:text-slate-50">Tools &amp; Languages</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-5 leading-relaxed">
             End-to-end implementation from prototyping to deployment.
           </p>
           <div className="flex flex-wrap gap-2">
             {["Python", "MATLAB", "OpenFOAM", "C/C++", "Git", "Linux"].map(s => (
-              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 hover:bg-emerald-500/30 hover:border-emerald-400/50 transition-all duration-200 cursor-default">{s}</span>
+              <span key={s} className="px-3 py-1.5 text-[11px] rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 dark:border-emerald-500/25 hover:bg-emerald-500/20 transition-all duration-200 cursor-default">{s}</span>
             ))}
           </div>
         </div>
@@ -1171,32 +1125,69 @@ I am still learning and trying to create social impact.
 {/* ================= EXPERIENCE ================= */}
 <section
   id="experience"
-  className="relative isolate bg-black text-white"
+  className="relative isolate bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] transition-colors duration-300"
 >
   <div className="max-w-7xl mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-16 md:pb-24">
 
     {/* SECTION TITLE */}
-    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-3">
+    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-cyan-600 dark:text-cyan-400 mb-3">
       Where I’ve worked
     </p>
-    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 md:mb-4">
+    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 md:mb-4 text-slate-900 dark:text-slate-50">
       Experience
     </h2>
-    <p className="text-sm md:text-base text-white/30 font-light mb-10 md:mb-16 max-w-xl">
+    <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 font-light mb-10 md:mb-16 max-w-xl">
       Research, internships, and industry exposure across multiple domains.
     </p>
 
     {/* EXPERIENCE LIST */}
     <div className="flex flex-col space-y-10 md:space-y-16">
 
+      {/* ================= AB INBEV ================= */}
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
+          <div className="md:col-span-3">
+            <div className="text-3xl md:text-5xl font-bold leading-none text-slate-900 dark:text-slate-50">2026</div>
+            <div className="mt-1 md:mt-2 text-sm md:text-base text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] font-light">
+              May — Jul
+            </div>
+          </div>
+
+          <div className="md:col-span-9">
+            <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
+              <div className="logo-surface w-16 h-16 md:w-24 md:h-24 flex items-center justify-center flex-shrink-0">
+                <img
+                  src={abInbevLogo}
+                  alt="AB InBev logo"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-12 h-12 md:w-20 md:h-20 object-contain"
+                />
+              </div>
+
+              <div>
+                <h3 className="text-2xl md:text-4xl font-semibold leading-tight text-slate-900 dark:text-slate-50">SET Intern</h3>
+                <p className="text-base md:text-lg text-slate-600 dark:text-slate-200 mt-1">AB InBev India</p>
+              </div>
+            </div>
+
+            <p className="text-base text-slate-500 dark:text-slate-300 mb-6">Supply Excellence Program</p>
+            <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-slate-700 dark:text-slate-200 leading-relaxed">
+              <li>Selected as one of only two students from 1,000+ applicants for AB InBev India’s Supply Excellence Program.</li>
+              <li>Collaborated cross-functionally to understand operational workflows and develop engineering solutions for process improvement in a world-class manufacturing facility.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* ================= IZTECH ================= */}
-      <div data-experience-card className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)] [&.mobile-glow-active]:border-cyan-400/50 [&.mobile-glow-active]:bg-white/[0.08] [&.mobile-glow-active]:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
           {/* DATE */}
           <div className="md:col-span-3">
-            <div className="text-3xl md:text-5xl font-bold leading-none">2025-26</div>
-            <div className="mt-1 md:mt-2 text-sm md:text-base text-white/50 uppercase tracking-[0.2em] font-light">
+            <div className="text-3xl md:text-5xl font-bold leading-none text-slate-900 dark:text-slate-50">2025-26</div>
+            <div className="mt-1 md:mt-2 text-sm md:text-base text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] font-light">
               March - January
             </div>
           </div>
@@ -1205,7 +1196,7 @@ I am still learning and trying to create social impact.
           <div className="md:col-span-9">
 
             <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
-              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+              <div className="logo-surface w-16 h-16 md:w-24 md:h-24 flex items-center justify-center flex-shrink-0">
                 <img
                   src={izmirLogo}
                   alt="Izmir Institute of Technology logo"
@@ -1216,28 +1207,28 @@ I am still learning and trying to create social impact.
               </div>
 
               <div>
-                <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
+                <h3 className="text-2xl md:text-4xl font-semibold leading-tight text-slate-900 dark:text-slate-50">
                    Research Assistant
                 </h3>
-                <p className="text-base md:text-lg text-white/80 mt-1">
+                <p className="text-base md:text-lg text-slate-600 dark:text-slate-200 mt-1">
                   Izmir Institute of Technology, Türkiye
                 </p>
               </div>
             </div>
 
-            <p className="text-base text-white/70 mb-6">
+            <p className="text-base text-slate-500 dark:text-slate-300 mb-6">
               Supervisor: Prof. Abhishek Dutta ·{" "}
               <a
                 href="https://drive.google.com/file/d/1Sxrx6Ayejsuv0TSRfixfyZazqnUuyvA0/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-4 decoration-white/50 hover:decoration-white transition"
+                className="underline underline-offset-4 decoration-slate-400 dark:decoration-white/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition"
               >
                 Letter of Recommendation ↗
               </a>
             </p>
 
-            <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-white/80 leading-relaxed">
+            <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-slate-700 dark:text-slate-200 leading-relaxed">
               <li>
                 Designed and trained models for chemical kinetics and population
                 balance systems, enforcing ODE constraints, conservation laws, and
@@ -1253,11 +1244,11 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* ================= IISc ================= */}
-      <div data-experience-card className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)] [&.mobile-glow-active]:border-cyan-400/50 [&.mobile-glow-active]:bg-white/[0.08] [&.mobile-glow-active]:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
         <div className="md:col-span-3">
-          <div className="text-3xl md:text-5xl font-bold leading-none">2025</div>
-          <div className="mt-1 md:mt-2 text-xs md:text-sm text-white/30 uppercase tracking-[0.2em] font-light">
+          <div className="text-3xl md:text-5xl font-bold leading-none text-slate-900 dark:text-slate-50">2025</div>
+          <div className="mt-1 md:mt-2 text-xs md:text-sm text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] font-light">
             Jun — Jul
           </div>
         </div>
@@ -1265,7 +1256,7 @@ I am still learning and trying to create social impact.
         <div className="md:col-span-9">
 
           <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
-            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-[0_0_40px_rgba(255,255,255,0.15)]">
+            <div className="logo-surface w-16 h-16 md:w-24 md:h-24 flex items-center justify-center flex-shrink-0">
               <img
                 src={iiscLogo}
                 alt="Indian Institute of Science logo"
@@ -1276,30 +1267,30 @@ I am still learning and trying to create social impact.
             </div>
 
             <div>
-              <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
+              <h3 className="text-2xl md:text-4xl font-semibold leading-tight text-slate-900 dark:text-slate-50">
                 Summer Research Intern (NPTEL)
               </h3>
-              <p className="text-sm md:text-lg text-white/70 mt-1">
+              <p className="text-sm md:text-lg text-slate-600 dark:text-slate-300 mt-1">
                 Indian Institute of Science, Bengaluru
               </p>
             </div>
           </div>
 
-          <p className="text-sm text-white/60 mb-6">
+          <p className="text-sm text-slate-500 dark:text-slate-300 mb-6">
             Supervisor: Prof. C. Pandu Rangan ·{" "}
             <a
   href="https://drive.google.com/file/d/1jKLCkEDBttQU3uVbAkSx3qRydgdhLjOm/view?usp=sharing"
   target="_blank"
   rel="noopener noreferrer"
-  className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition"
+  className="underline underline-offset-4 decoration-slate-400 dark:decoration-white/30 hover:text-cyan-600 dark:hover:text-cyan-400 transition"
 >
   Letter of Recommendation ↗
 </a>
 
           </p>
-<ul className="space-y-3 md:space-y-4 text-base md:text-lg text-white/80 leading-relaxed">
+<ul className="space-y-3 md:space-y-4 text-base md:text-lg text-slate-700 dark:text-slate-200 leading-relaxed">
               <li>
-                Selected for the prestigious NPTEL Summer Internship 2025, I conducted research at IISc Bengaluru on “Minimum Spanning Tree Algorithms”.Implemented Minimum Spanning Tree (MST) algorithms for scalable
+                Selected for the prestigious NPTEL Summer Internship 2025, I conducted research at IISc Bengaluru on “Minimum Spanning Tree Algorithms”. Implemented Minimum Spanning Tree (MST) algorithms for scalable
               engineering system optimization and network analysis. 
               </li>
               <li>
@@ -1312,12 +1303,12 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* ================= IIM RANCHI ================= */}
-      <div data-experience-card className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 md:p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-white/[0.08] hover:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)] [&.mobile-glow-active]:border-cyan-400/50 [&.mobile-glow-active]:bg-white/[0.08] [&.mobile-glow-active]:shadow-[0_0_80px_rgba(34,211,238,0.25),0_0_30px_rgba(34,211,238,0.15)]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
           <div className="md:col-span-3">
-            <div className="text-3xl md:text-5xl font-bold leading-none">2024</div>
-            <div className="mt-1 md:mt-2 text-sm md:text-base text-white/50 uppercase tracking-[0.2em] font-light">
+            <div className="text-3xl md:text-5xl font-bold leading-none text-slate-900 dark:text-slate-50">2024</div>
+            <div className="mt-1 md:mt-2 text-sm md:text-base text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] font-light">
               Dec — Feb 2025
             </div>
           </div>
@@ -1325,7 +1316,7 @@ I am still learning and trying to create social impact.
           <div className="md:col-span-9">
 
             <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
-              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-[0_0_40px_rgba(255,255,255,0.15)]">
+              <div className="logo-surface w-16 h-16 md:w-24 md:h-24 flex items-center justify-center flex-shrink-0">
                 <img
                   src={iimLogo}
                   alt="Indian Institute of Management Ranchi logo"
@@ -1336,28 +1327,28 @@ I am still learning and trying to create social impact.
               </div>
 
               <div>
-                <h3 className="text-2xl md:text-4xl font-semibold leading-tight">
+                <h3 className="text-2xl md:text-4xl font-semibold leading-tight text-slate-900 dark:text-slate-50">
                   Associate Researcher (Remote)
                 </h3>
-                <p className="text-base md:text-lg text-white/80 mt-1">
+                <p className="text-base md:text-lg text-slate-600 dark:text-slate-200 mt-1">
                   Indian Institute of Management, Ranchi
                 </p>
               </div>
             </div>
 
-            <p className="text-base text-white/70 mb-6">
+            <p className="text-base text-slate-500 dark:text-slate-300 mb-6">
               Supervisor: Prof. Sobhan Sarkar ·{" "}
               <a
                 href="https://drive.google.com/file/d/107bVc-lJF9rjRSGXB6CvfbegI76zWUhb/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-4 decoration-white/50 hover:decoration-white transition"
+                className="underline underline-offset-4 decoration-slate-400 dark:decoration-white/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition"
               >
                 Project Completion Certificate ↗
               </a>
             </p>
 
-            <ul className="space-y-4 text-base md:text-lg text-white/80 leading-relaxed">
+            <ul className="space-y-4 text-base md:text-lg text-slate-700 dark:text-slate-200 leading-relaxed">
               <li>
                 Built LSTM and GNN-based models for cybersecurity risk forecasting using large historical datasets.
               </li>
@@ -1378,45 +1369,46 @@ I am still learning and trying to create social impact.
 
 {/* ================= PROJECTS ================= */}
 <div ref={projectsTriggerRef} className="h-px w-full" />
-<section id="projects" className="bg-neutral-950 text-white">
+<section id="projects" className="bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 transition-colors duration-300">
 
 
   {/* ================= PROJECT 01 — REIMAGINED: HYDROGEN SYSTEM ================= */}
   {loadProjectVisuals ? (
-    <Suspense fallback={<div className="h-[520px] bg-white/5 animate-pulse" />}>
-      <Project01 />
+    <Suspense fallback={<div className="h-[520px] bg-slate-200 dark:bg-white/5 animate-pulse" />}>
+      <Project01 isDark={isDark} />
     </Suspense>
   ) : (
-    <div className="h-[520px] bg-white/5 animate-pulse" />
+    <div className="h-[520px] bg-slate-200 dark:bg-white/5 animate-pulse" />
   )}
 
 {/* ================= PROJECT 02 — ITERATIVE THERMO-MECHANICAL DESIGN ================= */}
 <section
   ref={project2Ref}
-  className="py-16 md:py-24 bg-[#0b0b0c] text-white overflow-hidden"
+  className="py-16 md:py-24 bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] overflow-hidden transition-colors duration-300"
 >
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
   {/* ================= HEADER ================= */}
-<div className="mb-10 border-b border-white/10 pb-8">
+<div className="mb-10 border-b border-slate-200 dark:border-[#26324A] pb-8">
 
   {/* TITLE + BUTTON ROW */}
   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
     <div>
-      <p className="font-mono text-xs text-green-400/70 mb-2">
+      <p className="font-mono text-xs text-emerald-600 dark:text-emerald-400 mb-2 uppercase flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
         PROJECT 02 
       </p>
 
-      <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+      <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
         Smart Heat Exchanger Designer
       </h2>
     </div>
 
     <a
       href="https://github.com/Glitched404/Heat_Exchanger_Designer"
-      className="px-5 py-2.5 md:px-6 md:py-3 border border-white/20 rounded-full
-                 hover:bg-white hover:text-black transition-colors
-                 text-sm font-medium shrink-0 w-fit"
+      className="px-5 py-2.5 md:px-6 md:py-3 border border-slate-300 dark:border-[#334155] rounded-full
+                 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors
+                 text-sm font-medium shrink-0 w-fit text-slate-800 dark:text-slate-50"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -1425,8 +1417,8 @@ I am still learning and trying to create social impact.
   </div>
 
   {/* FULL-WIDTH DESCRIPTION */}
-  <div className="w-full bg-gradient-to-r from-green-500/10 to-transparent rounded-2xl p-6 md:p-8 border-l-4 border-green-500">
-    <div className="text-white/80 leading-relaxed space-y-4 text-base md:text-lg">
+  <div className="w-full bg-gradient-to-r from-emerald-500/10 to-transparent rounded-2xl p-6 md:p-8 border-l-4 border-emerald-500">
+    <div className="text-slate-700 dark:text-slate-200 leading-relaxed space-y-4 text-base md:text-lg">
       <p>
         An end-to-end MATLAB framework for the design and optimization of
         shell-and-tube heat exchangers under realistic thermal, hydraulic,
@@ -1454,7 +1446,7 @@ I am still learning and trying to create social impact.
     <div className="relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 
       {/* Connecting Line */}
-      <div className="hidden md:block absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -z-10" />
+      <div className="hidden md:block absolute top-1/2 left-0 w-full h-[2px] bg-slate-200 dark:bg-white/10 -z-10" />
 
       {[
   {
@@ -1483,27 +1475,27 @@ I am still learning and trying to create social impact.
         <div
   key={i}
   ref={(el) => (pipelineCardsRef.current[i] = el)}
-  className="group relative bg-[#161618] p-6 rounded-xl text-center
-             border border-white/10 hover:border-green-500/50
-             transition-all duration-300
-             [&.pipeline-glow-active]:border-green-500/50 [&.pipeline-glow-active]:bg-[#1a1f1a] [&.pipeline-glow-active]:shadow-[0_0_30px_rgba(34,197,94,0.2)]"
+  className="group relative bg-slate-50 dark:bg-[#151b2e] p-6 rounded-xl text-center
+             border border-slate-200 dark:border-[#26324A] hover:border-emerald-500/50
+             shadow-sm dark:shadow-none transition-all duration-300
+             [&.pipeline-glow-active]:border-emerald-500/50 [&.pipeline-glow-active]:bg-emerald-50 dark:[&.pipeline-glow-active]:bg-[#1a1f1a] [&.pipeline-glow-active]:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
 >
 
           <div
-  className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0b0b0c] px-2
-             text-xs font-mono text-white/60
-             group-hover:text-green-400 transition-colors
-             group-[.pipeline-glow-active]:text-green-400"
+  className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white dark:bg-[#10172a] px-2.5 py-0.5 rounded
+             text-xs font-mono text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-[#26324A]
+             group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors
+             group-[.pipeline-glow-active]:text-emerald-600 dark:group-[.pipeline-glow-active]:text-emerald-400"
 >
 
             STEP {item.step}
           </div>
 
-          <h3 className="text-xl font-semibold mb-3 mt-2 group-hover:text-green-400 transition-colors group-[.pipeline-glow-active]:text-green-400">
+          <h3 className="text-xl font-semibold mb-3 mt-2 text-slate-900 dark:text-slate-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors group-[.pipeline-glow-active]:text-emerald-600 dark:group-[.pipeline-glow-active]:text-emerald-400">
             {item.title}
           </h3>
 
-          <p className="text-sm text-white/80 leading-relaxed">
+          <p className="text-sm text-slate-600 dark:text-slate-200 leading-relaxed">
             {item.desc}
           </p>
         </div>
@@ -1511,19 +1503,19 @@ I am still learning and trying to create social impact.
     </div>
 
     {/* ================= TERMINAL OUTPUT ================= */}
-    <div className="mt-14 bg-black rounded-lg border border-white/10
-                    p-6 font-mono text-sm shadow-2xl">
+    <div className="mt-14 bg-slate-950 dark:bg-black rounded-lg border border-slate-800 dark:border-[#26324A]
+                    p-6 font-mono text-sm shadow-xl text-slate-200">
 
       <div className="flex gap-2 mb-4 border-b border-white/10 pb-2">
         <div className="w-3 h-3 rounded-full bg-red-500" />
         <div className="w-3 h-3 rounded-full bg-yellow-500" />
         <div className="w-3 h-3 rounded-full bg-green-500" />
-        <span className="ml-auto text-xs text-white/50">
+        <span className="ml-auto text-xs text-slate-400">
           bash — sample output (example case)
         </span>
       </div>
 
-      <div className="space-y-1 text-white/90">
+      <div className="space-y-1 text-slate-300">
         <p>Initializing design parameters...</p>
         <p>
           Iteration 1: U_calc = 460 W/m²K{" "}
@@ -1534,22 +1526,22 @@ I am still learning and trying to create social impact.
           <span className="text-yellow-400">(converging)</span>
         </p>
         <p>Iteration 3: |ΔU| = 0.8% &lt; tolerance</p>
-        <p className="text-green-400">
+        <p className="text-emerald-400 font-semibold">
           Convergence achieved. Optimal configuration selected.
         </p>
 
-        <div className="mt-4 grid grid-cols-3 gap-4 border-t border-white/10 pt-4">
+        <div className="mt-4 grid grid-cols-3 gap-4 border-t border-slate-800 pt-4">
           <div>
-            <span className="block text-xs text-white/60">OVERALL U</span>
-            <span className="text-lg text-white">~720 W/m²K</span>
+            <span className="block text-xs text-slate-400">OVERALL U</span>
+            <span className="text-lg text-slate-100 font-semibold">~720 W/m²K</span>
           </div>
           <div>
-            <span className="block text-xs text-white/60">PRESSURE DROP</span>
-            <span className="text-lg text-white">&lt; 35 kPa</span>
+            <span className="block text-xs text-slate-400">PRESSURE DROP</span>
+            <span className="text-lg text-slate-100 font-semibold">&lt; 35 kPa</span>
           </div>
           <div>
-            <span className="block text-xs text-white/60">CAPITAL COST</span>
-            <span className="text-lg text-white">Within constraint</span>
+            <span className="block text-xs text-slate-400">CAPITAL COST</span>
+            <span className="text-lg text-slate-100 font-semibold">Within constraint</span>
           </div>
         </div>
       </div>
@@ -1560,26 +1552,27 @@ I am still learning and trying to create social impact.
 
 
 {loadProjectVisuals ? (
-  <Suspense fallback={<div className="h-[520px] bg-white/5 animate-pulse" />}>
-    <Project03 />
+  <Suspense fallback={<div className="h-[520px] bg-slate-200 dark:bg-white/5 animate-pulse" />}>
+    <Project03 isDark={isDark} />
   </Suspense>
 ) : (
-  <div className="h-[520px] bg-white/5 animate-pulse" />
+  <div className="h-[520px] bg-slate-200 dark:bg-white/5 animate-pulse" />
 )}
 
 {/* ================= PROJECT 04 — SYSTEMS PHASE MAP ================= */}
-<section ref={project04Ref} className="py-16 md:py-24 bg-[#0b1220] text-white relative overflow-hidden">
+<section ref={project04Ref} className="py-16 md:py-24 bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     {/* ================= HEADER ================= */}
-    <div className="mb-10 border-b border-white/10 pb-8">
+    <div className="mb-10 border-b border-slate-200 dark:border-[#26324A] pb-8">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
         <div>
-          <p className="font-mono text-xs tracking-[0.35em] uppercase text-cyan-400 mb-3">
+          <p className="font-mono text-xs tracking-[0.35em] uppercase text-cyan-600 dark:text-cyan-400 mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
             PROJECT 04 
           </p>
 
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
             Decarbonizing the Steel Industry
           </h2>
         </div>
@@ -1587,7 +1580,7 @@ I am still learning and trying to create social impact.
 
       {/* STYLED DESCRIPTION BOX */}
       <div className="bg-gradient-to-r from-cyan-500/10 to-transparent rounded-2xl p-6 md:p-8 border-l-4 border-cyan-500">
-        <div className="text-white/80 leading-relaxed space-y-4 text-base md:text-lg">
+        <div className="text-slate-700 dark:text-slate-200 leading-relaxed space-y-4 text-base md:text-lg font-light">
           <p>
             A system-level comparison of hydrogen-based reduction, electrified
             furnaces, carbon capture, and process optimization under real-world
@@ -1623,12 +1616,12 @@ I am still learning and trying to create social impact.
       ].map((card, i) => (
         <div
           key={i}
-          className="p-6 rounded-xl bg-[#0f172a] border border-white/10"
+          className="p-6 rounded-xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none"
         >
-          <h4 className="text-sm text-white/70 mb-2 uppercase tracking-wide">
+          <h4 className="text-sm text-slate-500 dark:text-slate-300 mb-2 uppercase tracking-wide font-medium">
             {card.title}
           </h4>
-          <p className="text-base text-white/90 leading-relaxed">
+          <p className="text-base text-slate-700 dark:text-slate-100 leading-relaxed font-light">
             {card.text}
           </p>
         </div>
@@ -1640,13 +1633,13 @@ I am still learning and trying to create social impact.
 
       {/* ================= PHASE MAP ================= */}
       <div className="lg:col-span-7">
-        <div className="relative aspect-[4/3] rounded-2xl bg-[#0f172a] border border-white/10 p-6">
+        <div className="relative aspect-[4/3] rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 shadow-sm dark:shadow-none">
 
-          {/* Axis labels (FIXED POSITIONING) */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-white/60">
-            Infrastructure & Energy Availability →
+          {/* Axis labels */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-slate-500 dark:text-slate-300 font-mono">
+            Infrastructure &amp; Energy Availability →
           </div>
-          <div className="absolute top-4 left-4 text-xs text-white/60">
+          <div className="absolute top-4 left-4 text-xs text-slate-500 dark:text-slate-300 font-mono">
             ↑ Process CO₂ Intensity Reduction
           </div>
 
@@ -1658,33 +1651,33 @@ I am still learning and trying to create social impact.
             {/* BF–BOF + CCUS */}
             <path
               d="M20 260 Q180 250 280 270 L280 360 L20 360 Z"
-              fill="rgba(239,68,68,0.18)"
+              fill={isDark ? "rgba(239,68,68,0.22)" : "rgba(239,68,68,0.18)"}
             />
-            <text x="30" y="305" fontSize="12" fill="rgba(255,255,255,0.55)">
+            <text x="30" y="305" fontSize="12" fill={isDark ? "rgba(255,255,255,0.7)" : "#991b1b"} fontWeight="500">
               BF–BOF + CCUS (Retrofit)
             </text>
 
             {/* Gas-DRI / Scrap-EAF */}
             <path
               d="M20 210 Q250 130 440 210 L440 290 Q250 260 20 245 Z"
-              fill="rgba(245,158,11,0.32)"
+              fill={isDark ? "rgba(245,158,11,0.32)" : "rgba(245,158,11,0.22)"}
             />
-            <text x="145" y="215" fontSize="13" fill="rgba(255,255,255,0.9)">
+            <text x="145" y="215" fontSize="13" fill={isDark ? "rgba(255,255,255,0.95)" : "#92400e"} fontWeight="500">
               Gas-DRI / Scrap-EAF Hybrids
             </text>
 
             {/* H₂-DRI + EAF */}
             <path
               d="M260 80 Q420 70 480 150 L480 220 Q350 185 260 195 Z"
-              fill="rgba(34,197,94,0.35)"
+              fill={isDark ? "rgba(34,197,94,0.35)" : "rgba(34,197,94,0.25)"}
             />
-            <text x="295" y="140" fontSize="12" fill="rgba(255,255,255,0.85)">
+            <text x="295" y="140" fontSize="12" fill={isDark ? "rgba(255,255,255,0.95)" : "#166534"} fontWeight="500">
               H₂-DRI + EAF (Green Hydrogen)
             </text>
           </svg>
 
           {/* Legend */}
-          <div className="absolute top-4 right-4 text-xs text-white/60 text-right max-w-[150px]">
+          <div className="absolute top-4 right-4 text-xs text-slate-500 dark:text-slate-300 text-right max-w-[150px] font-light">
             Dominance ≠ adoption<br />
             Lowest system-level resistance
           </div>
@@ -1694,12 +1687,12 @@ I am still learning and trying to create social impact.
       {/* ================= INTERPRETATION ================= */}
       <div className="lg:col-span-5 space-y-8">
 
-        <div className="p-8 rounded-2xl bg-[#0f172a] border border-white/10">
-          <h3 className="text-2xl font-semibold mb-4">
+        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none">
+          <h3 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-50">
             System Interpretation - Present Conditions
           </h3>
 
-          <p className="text-white/80 leading-relaxed mb-6">
+          <p className="text-slate-600 dark:text-slate-200 leading-relaxed mb-6 font-light">
             Under current grid carbon intensity, limited green hydrogen supply,
             and capital-heavy legacy steel infrastructure, hybrid Gas-DRI and
             Scrap-EAF routes offer the lowest resistance pathway to near-term
@@ -1708,33 +1701,33 @@ I am still learning and trying to create social impact.
 
           <div className="grid grid-cols-2 gap-6 text-sm">
             <div>
-              <span className="block text-white/60">Dominant pathway</span>
-              <span className="text-white font-medium">
+              <span className="block text-slate-500 dark:text-slate-300 text-xs font-mono uppercase mb-0.5">Dominant pathway</span>
+              <span className="text-slate-900 dark:text-slate-50 font-medium">
                 Gas-DRI / Scrap-EAF
               </span>
             </div>
             <div>
-              <span className="block text-white/60">CO₂ intensity</span>
-              <span className="text-white font-medium">
+              <span className="block text-slate-500 dark:text-slate-300 text-xs font-mono uppercase mb-0.5">CO₂ intensity</span>
+              <span className="text-slate-900 dark:text-slate-50 font-medium">
                 ~0.7–1.1 tCO₂ / t steel
               </span>
             </div>
             <div>
-              <span className="block text-white/60">Primary constraint</span>
-              <span className="text-white font-medium">
+              <span className="block text-slate-500 dark:text-slate-300 text-xs font-mono uppercase mb-0.5">Primary constraint</span>
+              <span className="text-slate-900 dark:text-slate-50 font-medium">
                 Green hydrogen availability
               </span>
             </div>
             <div>
-              <span className="block text-white/60">Role of CCUS</span>
-              <span className="text-white font-medium">
+              <span className="block text-slate-500 dark:text-slate-300 text-xs font-mono uppercase mb-0.5">Role of CCUS</span>
+              <span className="text-slate-900 dark:text-slate-50 font-medium">
                 Transitional retrofit option
               </span>
             </div>
           </div>
         </div>
 
-        <div className="text-sm text-white/60 leading-relaxed">
+        <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-mono">
           Assumptions:<br />
           Carbon price &gt; $80 / tCO₂ · Grid intensity &lt; 450 gCO₂ / kWh ·
           Limited green hydrogen availability
@@ -1747,54 +1740,58 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= PUBLICATIONS ================= */}
-<section id="publications" className="py-16 md:py-24 bg-[#f9fafb] text-black">
+<section id="publications" className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
-    <div className="mb-12 md:mb-20">
-      <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+    <div className="mb-12 md:mb-16">
+      <p className="font-mono text-xs tracking-widest text-cyan-600 dark:text-cyan-400 mb-2 uppercase flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+        RESEARCH OUTPUT
+      </p>
+      <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
         Publications
       </h2>
-      <p className="mt-2 text-base md:text-lg text-slate-600 max-w-lg">
+      <p className="mt-2 text-base md:text-lg text-slate-600 dark:text-slate-400 max-w-lg font-light">
         Peer-reviewed research in physics-informed machine learning.
       </p>
     </div>
 
     {/* ================= PUBLICATION PANEL ================= */}
-    <div className="relative rounded-3xl bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.15)] overflow-hidden">
+    <div className="relative rounded-3xl bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-md dark:shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)] backdrop-blur-sm overflow-hidden">
 
       {/* LEFT ACCENT */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-600 to-indigo-600" />
+      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-cyan-400 via-indigo-500 to-purple-500" />
 
       {/* ========== MOBILE LAYOUT ========== */}
-      <div className="lg:hidden p-5 sm:p-8">
+      <div className="lg:hidden p-6 sm:p-8">
 
         {/* TITLE FIRST */}
-        <h3 className="text-xl sm:text-2xl font-semibold leading-tight mb-3">
+        <h3 className="text-xl sm:text-2xl font-semibold leading-tight mb-3 text-slate-900 dark:text-slate-50">
           A Physics-Informed Neural Network (PINN) Approach to Over-Equilibrium
           Dynamics in Conservatively Perturbed Linear Equilibrium Systems
         </h3>
 
         {/* AUTHORS */}
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
           Dutta, A.; Mukherjee, B.; Hosen, S. A.; Turan, M.; Constales, D.;
           Yablonsky, G.
         </p>
 
         {/* COMPACT META ROW */}
         <div className="flex flex-wrap items-center gap-2 mb-5">
-          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-[#26324A] text-slate-700 dark:text-slate-300">
             Entropy
           </span>
-          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-[#26324A] text-slate-700 dark:text-slate-300">
             2026
           </span>
-          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
             Open Access
           </span>
         </div>
 
         {/* ABSTRACT */}
-        <div className="space-y-3 text-sm text-slate-700 leading-relaxed mb-5">
+        <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300 font-light leading-relaxed mb-5">
           <p>
             This work introduces a physics-informed neural network framework
             for modeling over-equilibrium dynamics in conservatively perturbed
@@ -1809,7 +1806,7 @@ I am still learning and trying to create social impact.
         </div>
 
         {/* TAGS */}
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="flex flex-wrap gap-2 mb-6">
           {[
             "Physics-Informed ML",
             "Dynamical Systems",
@@ -1819,7 +1816,7 @@ I am still learning and trying to create social impact.
           ].map((tag) => (
             <span
               key={tag}
-              className="px-2.5 py-1 text-[11px] rounded-full bg-slate-100 text-slate-500"
+              className="px-2.5 py-1 text-[11px] rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-[#202b42] text-slate-600 dark:text-slate-400"
             >
               {tag}
             </span>
@@ -1827,57 +1824,56 @@ I am still learning and trying to create social impact.
         </div>
 
         {/* CTA */}
-<a
-  href="https://www.mdpi.com/3645648"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-flex items-center gap-2 text-sm font-medium
-             text-blue-600 hover:text-blue-800 transition"
->
-  View journal article →
-</a>
+        <a
+          href="https://www.mdpi.com/3645648"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 transition"
+        >
+          View journal article ↗
+        </a>
       </div>
 
-      {/* ========== DESKTOP LAYOUT (unchanged) ========== */}
+      {/* ========== DESKTOP LAYOUT ========== */}
       <div className="hidden lg:grid lg:grid-cols-12 gap-12 p-12">
 
         {/* ================= META ================= */}
-        <div className="lg:col-span-3 space-y-6 text-sm">
+        <div className="lg:col-span-3 space-y-6 text-sm border-r border-slate-200 dark:border-[#202b42] pr-8">
 
           <div>
-            <span className="block text-slate-400 text-xs mb-1">Type</span>
-            <span className="font-medium">Journal Article</span>
+            <span className="block text-slate-500 dark:text-slate-400 font-mono text-xs mb-1 uppercase tracking-wider">Type</span>
+            <span className="font-medium text-slate-900 dark:text-slate-50">Journal Article</span>
           </div>
 
           <div>
-            <span className="block text-slate-400 text-xs mb-1">Journal</span>
-            <span className="font-medium">Entropy</span>
+            <span className="block text-slate-500 dark:text-slate-400 font-mono text-xs mb-1 uppercase tracking-wider">Journal</span>
+            <span className="font-medium text-slate-900 dark:text-slate-50">Entropy</span>
           </div>
 
           <div>
-            <span className="block text-slate-400 text-xs mb-1">Year</span>
-            <span className="font-medium">2026</span>
+            <span className="block text-slate-500 dark:text-slate-400 font-mono text-xs mb-1 uppercase tracking-wider">Year</span>
+            <span className="font-medium text-slate-900 dark:text-slate-50 font-mono">2026</span>
           </div>
 
           <div>
-            <span className="block text-slate-400 text-xs mb-1">Access</span>
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+            <span className="block text-slate-500 dark:text-slate-400 font-mono text-xs mb-1 uppercase tracking-wider">Access</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
               Open Access
             </span>
           </div>
 
-          <div className="pt-6 border-t border-slate-200 space-y-2">
+          <div className="pt-6 border-t border-slate-200 dark:border-[#26324A] space-y-2">
             <a
               href="https://www.mdpi.com/3645648"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium
-                         text-blue-600 hover:text-blue-800 transition"
+              className="inline-flex items-center gap-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 transition group"
             >
-              View journal article →
+              <span>View journal article</span>
+              <span className="group-hover:translate-x-0.5 transition-transform">↗</span>
             </a>
-            <p className="text-xs text-slate-400">
-              DOI available
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+              DOI: mdpi.com/3645648
             </p>
           </div>
         </div>
@@ -1885,17 +1881,17 @@ I am still learning and trying to create social impact.
         {/* ================= CONTENT ================= */}
         <div className="lg:col-span-9">
 
-          <h3 className="text-3xl font-semibold leading-tight mb-6">
+          <h3 className="text-2xl xl:text-3xl font-semibold leading-tight mb-4 text-slate-900 dark:text-slate-50">
             A Physics-Informed Neural Network (PINN) Approach to Over-Equilibrium
             Dynamics in Conservatively Perturbed Linear Equilibrium Systems
           </h3>
 
-          <p className="text-sm text-slate-500 mb-6">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-mono">
             Dutta, A.; Mukherjee, B.; Hosen, S. A.; Turan, M.; Constales, D.;
             Yablonsky, G.
           </p>
 
-          <div className="max-w-3xl space-y-4 text-slate-700 leading-relaxed">
+          <div className="max-w-3xl space-y-4 text-slate-600 dark:text-slate-300 font-light leading-relaxed">
             <p>
               This work introduces a physics-informed neural network framework
               for modeling over-equilibrium dynamics in conservatively perturbed
@@ -1911,7 +1907,7 @@ I am still learning and trying to create social impact.
           </div>
 
           {/* ================= TAGS ================= */}
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-2.5">
             {[
               "Physics-Informed ML",
               "Dynamical Systems",
@@ -1921,7 +1917,7 @@ I am still learning and trying to create social impact.
             ].map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 text-xs rounded-full bg-slate-100 text-slate-600"
+                className="px-3 py-1 text-xs rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-[#26324A] text-slate-700 dark:text-slate-300"
               >
                 {tag}
               </span>
@@ -1938,36 +1934,37 @@ I am still learning and trying to create social impact.
 {/* ================= CERTIFICATIONS ================= */}
 <div ref={certsWrapperRef}>
   {loadCarousels ? (
-    <Suspense fallback={<div className="h-[380px] bg-black/60 animate-pulse" />}>
-      <CertificationsCarousel certifications={certifications} />
+    <Suspense fallback={<div className="h-[380px] bg-slate-100 dark:bg-black/60 animate-pulse" />}>
+      <CertificationsCarousel certifications={certifications} isDark={isDark} />
     </Suspense>
   ) : (
-    <div className="h-[380px] bg-black/60 animate-pulse" />
+    <div className="h-[380px] bg-slate-100 dark:bg-black/60 animate-pulse" />
   )}
 </div>
 
 
 {/* ================= POSITIONS OF RESPONSIBILITY ================= */}
-<section ref={leadershipRef} className="py-14 md:py-20 bg-white overflow-hidden">
+<section ref={leadershipRef} className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
-    <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-slate-400 mb-2">
-      Leadership
+    <p className="font-mono text-xs tracking-widest text-cyan-600 dark:text-cyan-400 mb-2 uppercase flex items-center gap-2">
+      <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+      LEADERSHIP
     </p>
 
-    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
+    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 text-slate-900 dark:text-slate-50">
       Positions of Responsibility
     </h2>
-    <p className="text-sm text-slate-400 font-light mb-8">
+    <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 font-light mb-10">
       Campus and community leadership roles.
     </p>
 
     {loadCarousels ? (
-      <Suspense fallback={<div className="h-[300px] bg-slate-200 animate-pulse rounded-2xl" />}>
-        <LeadershipCarousel />
+      <Suspense fallback={<div className="h-[300px] bg-slate-100 dark:bg-white/[0.03] animate-pulse rounded-2xl" />}>
+        <LeadershipCarousel isDark={isDark} />
       </Suspense>
     ) : (
-      <div className="h-[300px] bg-slate-200 animate-pulse rounded-2xl" />
+      <div className="h-[300px] bg-slate-100 dark:bg-white/[0.03] animate-pulse rounded-2xl" />
     )}
 
   </div>
@@ -1976,29 +1973,46 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= FOOTER ================= */}
-<footer className="py-16 md:py-20 bg-[#0a0a0a] text-center">
-  <p className="text-xs tracking-[0.25em] uppercase text-white/20 mb-3">
+<footer className="py-16 md:py-20 bg-slate-100 dark:bg-[#0b1020] text-center px-4 border-t border-slate-200 dark:border-[#26324A] transition-colors duration-300">
+  <p className="text-xs tracking-[0.25em] uppercase text-slate-500 dark:text-slate-500 mb-3">
     © {new Date().getFullYear()}
   </p>
-  <p className="text-lg md:text-xl font-light text-white/50 tracking-wide">
+  <p className="text-lg md:text-xl font-light text-slate-800 dark:text-slate-300 tracking-wide">
     Bitan Mukherjee
   </p>
 
-  <div className="mt-6 flex justify-center gap-8">
+  <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm">
     <a
       href="https://www.linkedin.com/in/bitanmukherjee/"
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm text-white/30 hover:text-white/60 transition tracking-wide"
+      className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition tracking-wide"
     >
-      LinkedIn
+      LinkedIn ↗
     </a>
     <a
-      href="mailto:bitanm.chem.ug@jadavpuruniversity.in"
-      className="text-sm text-white/30 hover:text-white/60 transition tracking-wide"
+      href="https://github.com/Glitched404"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition tracking-wide"
     >
-      Email
+      GitHub ↗
     </a>
+    <a
+      href={resumeUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition tracking-wide"
+    >
+      Resume / CV ↗
+    </a>
+    <button
+      type="button"
+      onClick={copyEmail}
+      className="text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition tracking-wide inline-flex items-center gap-2 cursor-pointer bg-white dark:bg-white/[0.05] hover:bg-slate-50 dark:hover:bg-white/[0.1] px-3.5 py-1.5 rounded-full border border-slate-300 dark:border-[#26324A] shadow-sm"
+    >
+      <span>{copiedEmail ? "✓ Copied to Clipboard!" : "Copy Email"}</span>
+    </button>
   </div>
 </footer>
 
@@ -2008,4 +2022,3 @@ I am still learning and trying to create social impact.
     </div>
   );
 }
-
