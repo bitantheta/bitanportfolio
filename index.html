@@ -2,24 +2,85 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/webp" href="/assets/bmlogo-512.webp" />
     <link rel="preload" as="image" href="/assets/bmlogo-768.webp" imagesrcset="/assets/bmlogo-512.webp 512w, /assets/bmlogo-768.webp 768w" imagesizes="(max-width: 768px) 256px, 384px" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bitan Mukherjee</title>
-    <style>
-      /* Splash screen CSS - loads before React */
-      .splash-fade-out {
-        animation: splashFadeOut 0.8s ease-out forwards;
-      }
-      @keyframes splashFadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; visibility: hidden; }
-      }
-    </style>
-    <script type="module" crossorigin src="/assets/index-CKjnmnR8.js"></script>
+    <meta name="theme-color" content="#080808" />
+    <title>Bitan Mukherjee | Process Modeling, CFD & Physics-Informed ML</title>
+    <meta name="description" content="Portfolio of Bitan Mukherjee — Chemical Engineer and Computational Researcher specializing in Process Modeling, CFD Simulation, and Physics-Informed Machine Learning." />
+    <meta name="keywords" content="Bitan Mukherjee, Chemical Engineering, Process Modeling, CFD, System Simulation, Physics-Informed Neural Networks, PINNs, Hydrogen Energy" />
+    <meta name="author" content="Bitan Mukherjee" />
+    <link rel="canonical" href="https://bitan.tech/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bitan.tech/" />
+    <meta property="og:title" content="Bitan Mukherjee | Process Modeling, CFD & Physics-Informed ML" />
+    <meta property="og:description" content="Portfolio of Bitan Mukherjee — Chemical Engineer and Computational Researcher specializing in Process Modeling, CFD Simulation, and Physics-Informed Machine Learning." />
+    <meta property="og:image" content="https://bitan.tech/assets/bmlogo-768.webp" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://bitan.tech/" />
+    <meta name="twitter:title" content="Bitan Mukherjee | Process Modeling, CFD & Physics-Informed ML" />
+    <meta name="twitter:description" content="Portfolio of Bitan Mukherjee — Chemical Engineer and Computational Researcher specializing in Process Modeling, CFD Simulation, and Physics-Informed Machine Learning." />
+    <meta name="twitter:image" content="https://bitan.tech/assets/bmlogo-768.webp" />
+
+    <!-- Theme initialization script (prevents flash of wrong theme) -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('portfolio_theme');
+          var theme = saved === 'light' || saved === 'dark'
+            ? saved
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+          document.documentElement.style.colorScheme = theme;
+          document.querySelector('meta[name="theme-color"]').setAttribute(
+            'content',
+            theme === 'dark' ? '#080808' : '#f8fafc'
+          );
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Bitan Mukherjee",
+      "url": "https://bitan.tech/",
+      "sameAs": [
+        "https://www.linkedin.com/in/bitanmukherjee/",
+        "mailto:bitanm.chem.ug@jadavpuruniversity.in"
+      ],
+      "jobTitle": "Computational Engineering Researcher",
+      "affiliation": [
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Jadavpur University"
+        }
+      ],
+      "knowsAbout": [
+        "Process Modeling",
+        "System Simulation",
+        "CFD Analysis",
+        "Physics-Informed Neural Networks",
+        "Reaction Engineering",
+        "Hydrogen Energy"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BODke4nP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/plotly-gSPSn6_v.js">
     <link rel="modulepreload" crossorigin href="/assets/gsap-DDlvirwQ.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-C9tC_ofx.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-5sGtQZaO.css">
   </head>
   <body>
     <div id="root"></div>
