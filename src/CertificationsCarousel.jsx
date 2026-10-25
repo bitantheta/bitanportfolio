@@ -64,7 +64,7 @@ export default function CertificationsCarousel({ certifications }) {
   ];
 
   return (
-    <section className="py-14 md:py-20 bg-white dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+    <section className="py-14 md:py-20 bg-white dark:bg-[#080808] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] relative overflow-hidden transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
 
         <p className="font-mono text-xs text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
@@ -85,7 +85,7 @@ export default function CertificationsCarousel({ certifications }) {
               absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-10
               bg-white/90 dark:bg-black/60 hover:bg-white dark:hover:bg-black/80
               text-slate-800 dark:text-slate-50
-              border border-slate-200 dark:border-[#26324A]
+              border border-slate-200 dark:border-[#303030]
               p-2 md:p-3 rounded-full backdrop-blur shadow-md transition-all
             "
           >
@@ -104,7 +104,7 @@ export default function CertificationsCarousel({ certifications }) {
               absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-10
               bg-white/90 dark:bg-black/60 hover:bg-white dark:hover:bg-black/80
               text-slate-800 dark:text-slate-50
-              border border-slate-200 dark:border-[#26324A]
+              border border-slate-200 dark:border-[#303030]
               p-2 md:p-3 rounded-full backdrop-blur shadow-md transition-all
             "
           >

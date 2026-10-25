@@ -107,7 +107,7 @@ export function Project01({ isDark = true }) {
           y: -0.28,
           x: 0.5,
           xanchor: "center",
-          font: { color: isDark ? "#cbd5e1" : "#334155", size: 11 }
+          font: { color: isDark ? "#cbd5e1" : "#454545", size: 11 }
         }
       },
       { displayModeBar: false, responsive: true }
@@ -115,7 +115,7 @@ export function Project01({ isDark = true }) {
   }, [solar, capacity, stack, cooling, h2, h2Cap, isDark]);
 
   return (
-    <section className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+    <section className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] relative overflow-hidden transition-colors duration-300">
       {/* Ambient background glow */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
 
@@ -131,7 +131,7 @@ export function Project01({ isDark = true }) {
         </h2>
 
         {/* FULL-WIDTH DESCRIPTION */}
-        <div className="max-w-6xl bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-6 md:p-8 mb-14 border-l-4 border-l-emerald-500 shadow-sm dark:shadow-none backdrop-blur-sm">
+        <div className="max-w-6xl bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] rounded-2xl p-6 md:p-8 mb-14 border-l-4 border-l-emerald-500 shadow-sm dark:shadow-none backdrop-blur-sm">
           <div className="text-slate-600 dark:text-slate-300 space-y-4 text-base md:text-lg leading-relaxed font-light">
             <p>
               This project models and optimizes a solar-powered PEM electrolyzer system by
@@ -157,28 +157,28 @@ export function Project01({ isDark = true }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
           {/* CONTROLS */}
-          <div className="lg:col-span-3 flex flex-col gap-5 lg:h-[420px] lg:justify-between bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 md:p-6 shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="lg:col-span-3 flex flex-col gap-5 lg:h-[420px] lg:justify-between bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] rounded-2xl p-5 md:p-6 shadow-sm dark:shadow-none backdrop-blur-sm">
             <div>
               <p className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">Scenario Presets</p>
               <div className="flex flex-wrap gap-1.5 mb-4">
                 <button
                   type="button"
                   onClick={() => { setSolar(1.0); setCapacity(10); setStack(1.0); setCooling(1.0); }}
-                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-[#303030] transition cursor-pointer"
                 >
                   Baseline
                 </button>
                 <button
                   type="button"
                   onClick={() => { setSolar(1.8); setCapacity(25); setStack(1.2); setCooling(1.2); }}
-                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-[#303030] transition cursor-pointer"
                 >
                   Solar Peak
                 </button>
                 <button
                   type="button"
                   onClick={() => { setSolar(1.5); setCapacity(8); setStack(1.5); setCooling(0.6); }}
-                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-amber-500/20 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                  className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-amber-500/20 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-300 border border-slate-200 dark:border-[#303030] transition cursor-pointer"
                 >
                   Thermal Limit
                 </button>
@@ -211,12 +211,12 @@ export function Project01({ isDark = true }) {
           </div>
 
           {/* PLOT */}
-          <div className="lg:col-span-6 h-[340px] md:h-[420px] rounded-2xl p-2 md:p-4 bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="lg:col-span-6 h-[340px] md:h-[420px] rounded-2xl p-2 md:p-4 bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] shadow-sm dark:shadow-none backdrop-blur-sm">
             <div ref={plotRef} className="w-full h-full" />
           </div>
 
           {/* KPIs */}
-          <div className="lg:col-span-3 flex flex-col gap-6 lg:h-[420px] lg:justify-between bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-6 shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="lg:col-span-3 flex flex-col gap-6 lg:h-[420px] lg:justify-between bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] rounded-2xl p-6 shadow-sm dark:shadow-none backdrop-blur-sm">
             <div>
               <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                 Optimized Result

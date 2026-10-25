@@ -172,7 +172,7 @@ export function Project03({ isDark = true }) {
           y: -0.25,
           x: 0.5,
           xanchor: "center",
-          font: { color: isDark ? "#cbd5e1" : "#334155", size: 11 }
+          font: { color: isDark ? "#cbd5e1" : "#454545", size: 11 }
         },
         plot_bgcolor: "transparent",
         paper_bgcolor: "transparent"
@@ -182,14 +182,14 @@ export function Project03({ isDark = true }) {
   }, [flow_m3h, H, plotData, isDark]);
 
   return (
-    <section className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+    <section className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] relative overflow-hidden transition-colors duration-300">
       {/* Ambient background glow */}
       <div className="absolute top-1/3 left-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10">
 
         {/* ================= HEADER ================= */}
-        <div className="mb-12 border-b border-slate-200 dark:border-[#26324A] pb-8">
+        <div className="mb-12 border-b border-slate-200 dark:border-[#303030] pb-8">
 
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
             <div>
@@ -207,7 +207,7 @@ export function Project03({ isDark = true }) {
               href="https://github.com/Glitched404/PipeFlow_Analyzer_and_Pump_Selection_Tool"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 md:px-6 md:py-3 border border-slate-300 dark:border-[#334155] rounded-full
+              className="px-5 py-2.5 md:px-6 md:py-3 border border-slate-300 dark:border-[#454545] rounded-full
                          text-sm font-medium hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-black
                          transition-colors shrink-0 w-fit text-slate-800 dark:text-slate-50"
             >
@@ -215,7 +215,7 @@ export function Project03({ isDark = true }) {
             </a>
           </div>
 
-          <div className="bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-6 md:p-8 border-l-4 border-l-cyan-500 shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] rounded-2xl p-6 md:p-8 border-l-4 border-l-cyan-500 shadow-sm dark:shadow-none backdrop-blur-sm">
             <div className="text-slate-600 dark:text-slate-300 leading-relaxed space-y-4 text-base md:text-lg font-light">
               <p>
                 This project explores pump and pipe system behavior by treating
@@ -244,28 +244,28 @@ export function Project03({ isDark = true }) {
 
           {/* LEFT */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 md:p-6 shadow-sm dark:shadow-none backdrop-blur-sm space-y-6">
+            <div className="bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] rounded-2xl p-5 md:p-6 shadow-sm dark:shadow-none backdrop-blur-sm space-y-6">
               <div>
                 <p className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">Scenario Presets</p>
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     type="button"
                     onClick={() => { setFlow(245); setPowerLimit(25); setSafety(60); }}
-                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-cyan-500/20 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-cyan-500/20 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-[#303030] transition cursor-pointer"
                   >
                     Nominal Design
                   </button>
                   <button
                     type="button"
                     onClick={() => { setFlow(310); setPowerLimit(38); setSafety(35); }}
-                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-cyan-500/20 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-cyan-500/20 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-[#303030] transition cursor-pointer"
                   >
                     High Demand Flow
                   </button>
                   <button
                     type="button"
                     onClick={() => { setFlow(290); setPowerLimit(20); setSafety(85); }}
-                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-rose-500/20 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-300 border border-slate-200 dark:border-[#26324A] transition cursor-pointer"
+                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-rose-500/20 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-300 border border-slate-200 dark:border-[#303030] transition cursor-pointer"
                   >
                     Cavitation Warning
                   </button>
@@ -300,25 +300,25 @@ export function Project03({ isDark = true }) {
               </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] rounded-2xl shadow-sm dark:shadow-none backdrop-blur-sm">
+            <div className="p-6 bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] rounded-2xl shadow-sm dark:shadow-none backdrop-blur-sm">
               <p className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center justify-between">
                 <span>Operating Point Assessment</span>
                 <span className={`w-2 h-2 rounded-full ${cavitationOK ? 'bg-emerald-500' : 'bg-rose-500'} animate-pulse`} />
               </p>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#202b42]">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#242424]">
                   <span className="text-slate-500 dark:text-slate-400 text-xs block">Reynolds Number</span>
                   <span className="font-mono text-slate-900 dark:text-slate-50 text-sm font-semibold">{Re.toExponential(2)}</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#202b42]">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#242424]">
                   <span className="text-slate-500 dark:text-slate-400 text-xs block">System Head</span>
                   <span className="font-mono text-slate-900 dark:text-slate-50 text-sm font-semibold">{H.toFixed(2)} m</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#202b42]">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#242424]">
                   <span className="text-slate-500 dark:text-slate-400 text-xs block">Shaft Power</span>
                   <span className="font-mono text-cyan-600 dark:text-cyan-400 text-sm font-semibold">{P.toFixed(1)} kW</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#202b42]">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-[#242424]">
                   <span className="text-slate-500 dark:text-slate-400 text-xs block">Cavitation Status</span>
                   <span className={`font-mono text-xs font-semibold ${cavitationOK ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}`}>
                     {cavitationOK ? "✓ Safe Margin" : "✕ Risk Alert"}
@@ -329,7 +329,7 @@ export function Project03({ isDark = true }) {
           </div>
 
           {/* RIGHT */}
-          <div className="lg:col-span-8 w-full rounded-2xl p-2 md:p-4 bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none backdrop-blur-sm overflow-hidden">
+          <div className="lg:col-span-8 w-full rounded-2xl p-2 md:p-4 bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] shadow-sm dark:shadow-none backdrop-blur-sm overflow-hidden">
             <div ref={plotRef} className="w-full h-[400px]" />
           </div>
 

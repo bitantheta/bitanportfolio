@@ -90,7 +90,7 @@ export default function App() {
     root.style.colorScheme = theme;
 
     const themeColor = document.querySelector('meta[name="theme-color"]');
-    themeColor?.setAttribute("content", isDark ? "#0b1020" : "#f8fafc");
+    themeColor?.setAttribute("content", isDark ? "#080808" : "#f8fafc");
 
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, theme);
@@ -568,7 +568,7 @@ useEffect(() => {
   
 
    return (
-    <div className="app-shell bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-zinc-100 selection:bg-cyan-500/30 selection:text-cyan-900 dark:selection:text-cyan-200 min-h-screen transition-colors duration-300">
+    <div className="app-shell bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-zinc-100 selection:bg-cyan-500/30 selection:text-cyan-900 dark:selection:text-cyan-200 min-h-screen transition-colors duration-300">
 
     {/* ========== SCROLL PROGRESS BAR ========== */}
     <div className="fixed top-0 left-0 w-full h-[2px] z-[9998]">
@@ -598,7 +598,7 @@ useEffect(() => {
 <section
   id="hero"
   ref={heroSectionRef}
-  className="h-screen relative overflow-hidden bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 transition-colors duration-300"
+  className="h-screen relative overflow-hidden bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-slate-50 transition-colors duration-300"
 >
   {/* Grain texture overlay */}
   <div className="grain-overlay" />
@@ -667,7 +667,7 @@ useEffect(() => {
         aria-label={`Switch from ${theme} mode to ${isDark ? "light" : "dark"} mode`}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium
           bg-slate-200/90 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20
-          text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-[#26324A]
+          text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-[#303030]
           transition cursor-pointer shadow-sm"
       >
         {isDark ? (
@@ -701,7 +701,7 @@ useEffect(() => {
 
     {/* Mobile menu overlay */}
     {menuOpen && (
-      <div className="fixed inset-0 z-50 bg-white/95 dark:bg-[#0b1020]/95 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+      <div className="fixed inset-0 z-50 bg-white/95 dark:bg-[#080808]/95 backdrop-blur-md flex flex-col items-center justify-center gap-6">
         {[
           { label: "Skills", id: "skills" },
           { label: "Experience", id: "experience" },
@@ -739,7 +739,7 @@ useEffect(() => {
   {/* ================= DESKTOP HERO ================= */}
 
 {/* DESKTOP NAV — hidden on mobile */}
-<nav className="fixed top-5 right-5 hidden md:flex items-center gap-5 rounded-full border border-slate-200/80 dark:border-[#334155] bg-white/80 dark:bg-[#10172a]/90 px-5 py-2.5 text-sm lg:text-base font-light text-slate-600 dark:text-slate-300 shadow-lg shadow-slate-900/5 dark:shadow-black/25 backdrop-blur-xl z-[60]">
+<nav className="fixed top-5 right-5 hidden md:flex items-center gap-5 rounded-full border border-slate-200/80 dark:border-[#454545] bg-white/80 dark:bg-[#101010]/90 px-5 py-2.5 text-sm lg:text-base font-light text-slate-600 dark:text-slate-300 shadow-lg shadow-slate-900/5 dark:shadow-black/25 backdrop-blur-xl z-[60]">
 
   {/* Internal sections */}
   {[
@@ -782,7 +782,7 @@ useEffect(() => {
     aria-label={`Switch from ${theme} mode to ${isDark ? "light" : "dark"} mode`}
     className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider transition-all duration-300
       bg-slate-200/80 dark:bg-white/[0.06] hover:bg-slate-300 dark:hover:bg-white/15
-      text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-[#26324A]
+      text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-[#303030]
       shadow-sm hover:scale-105 active:scale-95 cursor-pointer ml-2"
   >
     {isDark ? (
@@ -837,7 +837,7 @@ useEffect(() => {
 
 
 {/* ================= ABOUT ME (right after hero) ================= */}
-<section id="about" className="py-20 md:py-28 bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+<section id="about" className="py-20 md:py-28 bg-white dark:bg-[#101010] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] relative overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
 
     {/* LEFT — TEXT + CARDS (VERTICALLY CENTERED) */}
@@ -852,7 +852,7 @@ useEffect(() => {
         </p>
 
         <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-8 md:mb-12 max-w-3xl font-light">
-          Hi! I am a third-year Chemical Engineering undergraduate.
+          Hi! I am a fourth year Chemical Engineering undergraduate.
 I like working with processes, models, and systems that make sense in the real world.
 Most of my time goes into projects, simulations, and research that sit somewhere between theory and practice.
 I am still learning and trying to create social impact.
@@ -862,7 +862,7 @@ I am still learning and trying to create social impact.
         <div className="flex flex-col gap-4 sm:hidden">
 
           {/* AGE */}
-          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
             <div className="text-5xl font-bold text-slate-900 dark:text-slate-50 leading-none">22</div>
             <div>
               <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 mb-1">AGE</div>
@@ -871,7 +871,7 @@ I am still learning and trying to create social impact.
           </div>
 
           {/* CURRENT */}
-          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
+          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
             <div className="logo-surface w-14 h-14 flex-shrink-0"><img src={juLogo} alt="Jadavpur University" loading="lazy" decoding="async" className="w-12 h-12 object-contain" /></div>
             <div>
               <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 mb-1">CURRENT</div>
@@ -881,8 +881,8 @@ I am still learning and trying to create social impact.
           </div>
 
           {/* AB INBEV */}
-          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
-            <div className="logo-surface w-20 h-12 flex-shrink-0"><img src={abInbevLogo} alt="AB InBev" loading="lazy" decoding="async" className="w-16 h-8 object-contain" /></div>
+          <div className="profile-card flex items-center gap-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] rounded-2xl p-5 shadow-sm dark:shadow-none backdrop-blur-sm">
+            <div className="logo-surface w-14 h-14 flex-shrink-0"><img src={abInbevLogo} alt="AB InBev" loading="lazy" decoding="async" className="w-11 h-11 object-contain" /></div>
             <div>
               <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 mb-1">UPCOMING</div>
               <div className="text-base font-semibold text-slate-900 dark:text-slate-50">SET at AB InBev India</div>
@@ -899,7 +899,7 @@ I am still learning and trying to create social impact.
             <div className="flip-card-inner">
 
               {/* FRONT */}
-              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
+              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
                 <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                   AGE
                 </div>
@@ -914,7 +914,7 @@ I am still learning and trying to create social impact.
               </div>
 
               {/* BACK */}
-              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151b2e] border border-cyan-500/40 rounded-2xl p-8 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
+              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151515] border border-cyan-500/40 rounded-2xl p-8 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
                 <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200 font-light">
                   Born and brought up in Kolkata, India.
                 </p>
@@ -928,19 +928,20 @@ I am still learning and trying to create social impact.
             <div className="flip-card-inner">
 
               {/* FRONT */}
-              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
+              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
                 <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                   CURRENT 
                 </div>
 
                 <div className="flex-grow flex flex-col items-center justify-center">
-                  <img
-                    src={juLogo}
-                    alt="Jadavpur University"
-                    loading="lazy"
-                    decoding="async"
-                    className="logo-surface w-16 h-16 p-1 mb-3"
-                  />
+                  <div className="logo-surface w-16 h-16 p-1 mb-3">
+                    <img
+                      src={juLogo}
+                      alt="Jadavpur University"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
                   <div className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                     Senior,
                     <br />
@@ -952,7 +953,7 @@ I am still learning and trying to create social impact.
               </div>
 
               {/* BACK */}
-              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151b2e] border border-cyan-500/40 rounded-2xl p-6 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
+              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151515] border border-cyan-500/40 rounded-2xl p-6 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
                 <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300 font-light">
                   Courses taken: Fluid Mechanics, Heat Transfer, Transport Phenomena, Reaction Engineering, Chemical Engineering Thermodynamics
                 </p>
@@ -966,19 +967,20 @@ I am still learning and trying to create social impact.
             <div className="flip-card-inner">
 
               {/* FRONT */}
-              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
+              <div className="profile-card flip-card-face bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] rounded-2xl p-8 flex flex-col justify-between text-center shadow-sm dark:shadow-none backdrop-blur-sm text-slate-900 dark:text-slate-50">
                 <div className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                   UPCOMING
                 </div>
 
                 <div className="flex-grow flex flex-col items-center justify-center">
-                  <img
-                    src={abInbevLogo}
-                    alt="AB InBev"
-                    loading="lazy"
-                    decoding="async"
-                    className="logo-surface w-28 h-14 p-2 mb-3"
-                  />
+                  <div className="logo-surface w-20 h-20 p-3 mb-3">
+                    <img
+                      src={abInbevLogo}
+                      alt="AB InBev"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
                   <div className="text-lg font-semibold text-slate-900 dark:text-slate-50 leading-snug">
                     SET at
                     <br />
@@ -990,7 +992,7 @@ I am still learning and trying to create social impact.
               </div>
 
               {/* BACK */}
-              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151b2e] border border-cyan-500/40 rounded-2xl p-6 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
+              <div className="flip-card-face flip-card-back bg-white dark:bg-[#151515] border border-cyan-500/40 rounded-2xl p-6 flex items-center justify-center text-center text-slate-700 dark:text-slate-200 shadow-[0_0_35px_rgba(6,182,212,0.12)]">
                 <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300 font-light">
                   Completed the Supply Excellence Program as a SET Intern, collaborating across functions on operational workflows and process-improvement solutions.
                 </p>
@@ -1006,7 +1008,7 @@ I am still learning and trying to create social impact.
 
     {/* RIGHT — PHOTO */}
     <div className="lg:col-span-4 flex justify-center lg:justify-end">
-      <div className="w-full max-w-[320px] h-[400px] sm:max-w-[400px] sm:h-[500px] lg:max-w-[500px] lg:h-[600px] rounded-[2rem] bg-slate-100 dark:bg-white/[0.03] border border-slate-200 dark:border-[#26324A] overflow-hidden shadow-xl dark:shadow-2xl">
+      <div className="w-full max-w-[320px] h-[400px] sm:max-w-[400px] sm:h-[500px] lg:max-w-[500px] lg:h-[600px] rounded-[2rem] bg-slate-100 dark:bg-white/[0.03] border border-slate-200 dark:border-[#303030] overflow-hidden shadow-xl dark:shadow-2xl">
         <picture>
           <source
             type="image/avif"
@@ -1034,7 +1036,7 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= SKILLS ================= */}
-<section id="skills" className="relative py-20 md:py-28 overflow-hidden bg-slate-50 dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] transition-colors duration-300">
+<section id="skills" className="relative py-20 md:py-28 overflow-hidden bg-slate-50 dark:bg-[#080808] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] transition-colors duration-300">
 
   {/* Subtle grid pattern overlay */}
   <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: isDark ? 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)' : 'radial-gradient(circle, rgba(0,0,0,0.4) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
@@ -1056,7 +1058,7 @@ I am still learning and trying to create social impact.
       className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6"
     >
       {/* MODELING & SIMULATION */}
-      <div data-skill-card data-skill-color="blue" className="group relative rounded-2xl border border-slate-200 dark:border-[#26324A] bg-white dark:bg-[#151b2e] p-7 md:p-8 hover:border-blue-500/60 hover:bg-slate-50 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] [&.mobile-glow-active]:border-blue-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-skill-card data-skill-color="blue" className="group relative rounded-2xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#151515] p-7 md:p-8 hover:border-blue-500/60 hover:bg-slate-50 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] [&.mobile-glow-active]:border-blue-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
           <div className="w-11 h-11 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center mb-5 group-hover:bg-blue-500/25 group-hover:scale-105 transition-all duration-300">
@@ -1077,7 +1079,7 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* MACHINE LEARNING */}
-      <div data-skill-card data-skill-color="purple" className="group relative rounded-2xl border border-slate-200 dark:border-[#26324A] bg-white dark:bg-[#151b2e] p-7 md:p-8 hover:border-purple-500/60 hover:bg-slate-50 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(147,51,234,0.15)] [&.mobile-glow-active]:border-purple-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-skill-card data-skill-color="purple" className="group relative rounded-2xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#151515] p-7 md:p-8 hover:border-purple-500/60 hover:bg-slate-50 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(147,51,234,0.15)] [&.mobile-glow-active]:border-purple-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
           <div className="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mb-5 group-hover:bg-purple-500/25 group-hover:scale-105 transition-all duration-300">
@@ -1098,7 +1100,7 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* TOOLS & LANGUAGES */}
-      <div data-skill-card data-skill-color="emerald" className="group relative rounded-2xl border border-slate-200 dark:border-[#26324A] bg-white dark:bg-[#151b2e] p-7 md:p-8 hover:border-emerald-500/60 hover:bg-slate-50 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] [&.mobile-glow-active]:border-emerald-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-skill-card data-skill-color="emerald" className="group relative rounded-2xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#151515] p-7 md:p-8 hover:border-emerald-500/60 hover:bg-slate-50 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none transition-all duration-500 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] [&.mobile-glow-active]:border-emerald-500/60 [&.mobile-glow-active]:bg-slate-50 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
           <div className="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-5 group-hover:bg-emerald-500/25 group-hover:scale-105 transition-all duration-300">
@@ -1125,7 +1127,7 @@ I am still learning and trying to create social impact.
 {/* ================= EXPERIENCE ================= */}
 <section
   id="experience"
-  className="relative isolate bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] transition-colors duration-300"
+  className="relative isolate bg-white dark:bg-[#101010] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] transition-colors duration-300"
 >
   <div className="max-w-7xl mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-16 md:pb-24">
 
@@ -1144,7 +1146,7 @@ I am still learning and trying to create social impact.
     <div className="flex flex-col space-y-10 md:space-y-16">
 
       {/* ================= AB INBEV ================= */}
-      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
           <div className="md:col-span-3">
             <div className="text-3xl md:text-5xl font-bold leading-none text-slate-900 dark:text-slate-50">2026</div>
@@ -1171,7 +1173,17 @@ I am still learning and trying to create social impact.
               </div>
             </div>
 
-            <p className="text-base text-slate-500 dark:text-slate-300 mb-6">Supply Excellence Program</p>
+            <p className="text-base text-slate-500 dark:text-slate-300 mb-6">
+              Pre-placement offer received ·{" "}
+              <a
+                href="https://drive.google.com/file/d/13ce9mMhLRdXTUhs2gFCCzVfw6oCjJoNA/view"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 decoration-slate-400 dark:decoration-white/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition"
+              >
+                Internship Completion Letter ↗
+              </a>
+            </p>
             <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-slate-700 dark:text-slate-200 leading-relaxed">
               <li>Selected as one of only two students from 1,000+ applicants for AB InBev India’s Supply Excellence Program.</li>
               <li>Collaborated cross-functionally to understand operational workflows and develop engineering solutions for process improvement in a world-class manufacturing facility.</li>
@@ -1181,7 +1193,7 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* ================= IZTECH ================= */}
-      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
           {/* DATE */}
@@ -1244,7 +1256,7 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* ================= IISc ================= */}
-      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
         <div className="md:col-span-3">
           <div className="text-3xl md:text-5xl font-bold leading-none text-slate-900 dark:text-slate-50">2025</div>
@@ -1303,7 +1315,7 @@ I am still learning and trying to create social impact.
       </div>
 
       {/* ================= IIM RANCHI ================= */}
-      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1a2338] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1a2338]">
+      <div data-experience-card className="rounded-2xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] p-6 md:p-8 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-100 dark:hover:bg-[#1f1f1f] shadow-sm dark:shadow-none hover:shadow-lg [&.mobile-glow-active]:border-cyan-500/50 [&.mobile-glow-active]:bg-slate-100 dark:[&.mobile-glow-active]:bg-[#1f1f1f]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-start">
 
           <div className="md:col-span-3">
@@ -1369,7 +1381,7 @@ I am still learning and trying to create social impact.
 
 {/* ================= PROJECTS ================= */}
 <div ref={projectsTriggerRef} className="h-px w-full" />
-<section id="projects" className="bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 transition-colors duration-300">
+<section id="projects" className="bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-slate-50 transition-colors duration-300">
 
 
   {/* ================= PROJECT 01 — REIMAGINED: HYDROGEN SYSTEM ================= */}
@@ -1384,12 +1396,12 @@ I am still learning and trying to create social impact.
 {/* ================= PROJECT 02 — ITERATIVE THERMO-MECHANICAL DESIGN ================= */}
 <section
   ref={project2Ref}
-  className="py-16 md:py-24 bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] overflow-hidden transition-colors duration-300"
+  className="py-16 md:py-24 bg-white dark:bg-[#101010] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] overflow-hidden transition-colors duration-300"
 >
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
   {/* ================= HEADER ================= */}
-<div className="mb-10 border-b border-slate-200 dark:border-[#26324A] pb-8">
+<div className="mb-10 border-b border-slate-200 dark:border-[#303030] pb-8">
 
   {/* TITLE + BUTTON ROW */}
   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
@@ -1406,7 +1418,7 @@ I am still learning and trying to create social impact.
 
     <a
       href="https://github.com/Glitched404/Heat_Exchanger_Designer"
-      className="px-5 py-2.5 md:px-6 md:py-3 border border-slate-300 dark:border-[#334155] rounded-full
+      className="px-5 py-2.5 md:px-6 md:py-3 border border-slate-300 dark:border-[#454545] rounded-full
                  hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors
                  text-sm font-medium shrink-0 w-fit text-slate-800 dark:text-slate-50"
       target="_blank"
@@ -1475,15 +1487,15 @@ I am still learning and trying to create social impact.
         <div
   key={i}
   ref={(el) => (pipelineCardsRef.current[i] = el)}
-  className="group relative bg-slate-50 dark:bg-[#151b2e] p-6 rounded-xl text-center
-             border border-slate-200 dark:border-[#26324A] hover:border-emerald-500/50
+  className="group relative bg-slate-50 dark:bg-[#151515] p-6 rounded-xl text-center
+             border border-slate-200 dark:border-[#303030] hover:border-emerald-500/50
              shadow-sm dark:shadow-none transition-all duration-300
              [&.pipeline-glow-active]:border-emerald-500/50 [&.pipeline-glow-active]:bg-emerald-50 dark:[&.pipeline-glow-active]:bg-[#1a1f1a] [&.pipeline-glow-active]:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
 >
 
           <div
-  className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white dark:bg-[#10172a] px-2.5 py-0.5 rounded
-             text-xs font-mono text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-[#26324A]
+  className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white dark:bg-[#101010] px-2.5 py-0.5 rounded
+             text-xs font-mono text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-[#303030]
              group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors
              group-[.pipeline-glow-active]:text-emerald-600 dark:group-[.pipeline-glow-active]:text-emerald-400"
 >
@@ -1503,7 +1515,7 @@ I am still learning and trying to create social impact.
     </div>
 
     {/* ================= TERMINAL OUTPUT ================= */}
-    <div className="mt-14 bg-slate-950 dark:bg-black rounded-lg border border-slate-800 dark:border-[#26324A]
+    <div className="mt-14 bg-slate-950 dark:bg-black rounded-lg border border-slate-800 dark:border-[#303030]
                     p-6 font-mono text-sm shadow-xl text-slate-200">
 
       <div className="flex gap-2 mb-4 border-b border-white/10 pb-2">
@@ -1560,11 +1572,11 @@ I am still learning and trying to create social impact.
 )}
 
 {/* ================= PROJECT 04 — SYSTEMS PHASE MAP ================= */}
-<section ref={project04Ref} className="py-16 md:py-24 bg-white dark:bg-[#10172a] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+<section ref={project04Ref} className="py-16 md:py-24 bg-white dark:bg-[#101010] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] relative overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     {/* ================= HEADER ================= */}
-    <div className="mb-10 border-b border-slate-200 dark:border-[#26324A] pb-8">
+    <div className="mb-10 border-b border-slate-200 dark:border-[#303030] pb-8">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
         <div>
           <p className="font-mono text-xs tracking-[0.35em] uppercase text-cyan-600 dark:text-cyan-400 mb-3 flex items-center gap-2">
@@ -1616,7 +1628,7 @@ I am still learning and trying to create social impact.
       ].map((card, i) => (
         <div
           key={i}
-          className="p-6 rounded-xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none"
+          className="p-6 rounded-xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] shadow-sm dark:shadow-none"
         >
           <h4 className="text-sm text-slate-500 dark:text-slate-300 mb-2 uppercase tracking-wide font-medium">
             {card.title}
@@ -1633,7 +1645,7 @@ I am still learning and trying to create social impact.
 
       {/* ================= PHASE MAP ================= */}
       <div className="lg:col-span-7">
-        <div className="relative aspect-[4/3] rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] p-6 shadow-sm dark:shadow-none">
+        <div className="relative aspect-[4/3] rounded-2xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] p-6 shadow-sm dark:shadow-none">
 
           {/* Axis labels */}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-slate-500 dark:text-slate-300 font-mono">
@@ -1687,7 +1699,7 @@ I am still learning and trying to create social impact.
       {/* ================= INTERPRETATION ================= */}
       <div className="lg:col-span-5 space-y-8">
 
-        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-sm dark:shadow-none">
+        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#303030] shadow-sm dark:shadow-none">
           <h3 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-50">
             System Interpretation - Present Conditions
           </h3>
@@ -1740,7 +1752,7 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= PUBLICATIONS ================= */}
-<section id="publications" className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] relative overflow-hidden transition-colors duration-300">
+<section id="publications" className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] relative overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     <div className="mb-12 md:mb-16">
@@ -1757,7 +1769,7 @@ I am still learning and trying to create social impact.
     </div>
 
     {/* ================= PUBLICATION PANEL ================= */}
-    <div className="relative rounded-3xl bg-white dark:bg-[#151b2e] border border-slate-200 dark:border-[#26324A] shadow-md dark:shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)] backdrop-blur-sm overflow-hidden">
+    <div className="relative rounded-3xl bg-white dark:bg-[#151515] border border-slate-200 dark:border-[#303030] shadow-md dark:shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)] backdrop-blur-sm overflow-hidden">
 
       {/* LEFT ACCENT */}
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-cyan-400 via-indigo-500 to-purple-500" />
@@ -1779,10 +1791,10 @@ I am still learning and trying to create social impact.
 
         {/* COMPACT META ROW */}
         <div className="flex flex-wrap items-center gap-2 mb-5">
-          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-[#26324A] text-slate-700 dark:text-slate-300">
+          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-[#303030] text-slate-700 dark:text-slate-300">
             Entropy
           </span>
-          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-[#26324A] text-slate-700 dark:text-slate-300">
+          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-[#303030] text-slate-700 dark:text-slate-300">
             2026
           </span>
           <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
@@ -1816,7 +1828,7 @@ I am still learning and trying to create social impact.
           ].map((tag) => (
             <span
               key={tag}
-              className="px-2.5 py-1 text-[11px] rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-[#202b42] text-slate-600 dark:text-slate-400"
+              className="px-2.5 py-1 text-[11px] rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-[#242424] text-slate-600 dark:text-slate-400"
             >
               {tag}
             </span>
@@ -1838,7 +1850,7 @@ I am still learning and trying to create social impact.
       <div className="hidden lg:grid lg:grid-cols-12 gap-12 p-12">
 
         {/* ================= META ================= */}
-        <div className="lg:col-span-3 space-y-6 text-sm border-r border-slate-200 dark:border-[#202b42] pr-8">
+        <div className="lg:col-span-3 space-y-6 text-sm border-r border-slate-200 dark:border-[#242424] pr-8">
 
           <div>
             <span className="block text-slate-500 dark:text-slate-400 font-mono text-xs mb-1 uppercase tracking-wider">Type</span>
@@ -1862,7 +1874,7 @@ I am still learning and trying to create social impact.
             </span>
           </div>
 
-          <div className="pt-6 border-t border-slate-200 dark:border-[#26324A] space-y-2">
+          <div className="pt-6 border-t border-slate-200 dark:border-[#303030] space-y-2">
             <a
               href="https://www.mdpi.com/3645648"
               target="_blank"
@@ -1917,7 +1929,7 @@ I am still learning and trying to create social impact.
             ].map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 text-xs rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-[#26324A] text-slate-700 dark:text-slate-300"
+                className="px-3 py-1 text-xs rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-[#303030] text-slate-700 dark:text-slate-300"
               >
                 {tag}
               </span>
@@ -1944,7 +1956,7 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= POSITIONS OF RESPONSIBILITY ================= */}
-<section ref={leadershipRef} className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#0b1020] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#202b42] overflow-hidden transition-colors duration-300">
+<section ref={leadershipRef} className="py-20 md:py-28 bg-[#f8fafc] dark:bg-[#080808] text-slate-900 dark:text-slate-50 border-t border-slate-200 dark:border-[#242424] overflow-hidden transition-colors duration-300">
   <div className="max-w-7xl mx-auto px-5 md:px-8">
 
     <p className="font-mono text-xs tracking-widest text-cyan-600 dark:text-cyan-400 mb-2 uppercase flex items-center gap-2">
@@ -1973,7 +1985,7 @@ I am still learning and trying to create social impact.
 
 
 {/* ================= FOOTER ================= */}
-<footer className="py-16 md:py-20 bg-slate-100 dark:bg-[#0b1020] text-center px-4 border-t border-slate-200 dark:border-[#26324A] transition-colors duration-300">
+<footer className="py-16 md:py-20 bg-slate-100 dark:bg-[#080808] text-center px-4 border-t border-slate-200 dark:border-[#303030] transition-colors duration-300">
   <p className="text-xs tracking-[0.25em] uppercase text-slate-500 dark:text-slate-500 mb-3">
     © {new Date().getFullYear()}
   </p>
@@ -2009,7 +2021,7 @@ I am still learning and trying to create social impact.
     <button
       type="button"
       onClick={copyEmail}
-      className="text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition tracking-wide inline-flex items-center gap-2 cursor-pointer bg-white dark:bg-white/[0.05] hover:bg-slate-50 dark:hover:bg-white/[0.1] px-3.5 py-1.5 rounded-full border border-slate-300 dark:border-[#26324A] shadow-sm"
+      className="text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition tracking-wide inline-flex items-center gap-2 cursor-pointer bg-white dark:bg-white/[0.05] hover:bg-slate-50 dark:hover:bg-white/[0.1] px-3.5 py-1.5 rounded-full border border-slate-300 dark:border-[#303030] shadow-sm"
     >
       <span>{copiedEmail ? "✓ Copied to Clipboard!" : "Copy Email"}</span>
     </button>

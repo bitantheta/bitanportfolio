@@ -174,8 +174,8 @@ export default function LeadershipCarousel() {
                 w-[220px] h-[250px]
                 flex-shrink-0
                 rounded-2xl
-                bg-white dark:bg-[#151b2e]
-                border border-slate-200 dark:border-[#26324A]
+                bg-white dark:bg-[#151515]
+                border border-slate-200 dark:border-[#303030]
                 shadow-sm dark:shadow-[0_20px_40px_rgba(0,0,0,0.5)]
                 p-5
                 flex flex-col
@@ -184,7 +184,7 @@ export default function LeadershipCarousel() {
               "
             >
               {/* IMAGE */}
-              <div className="h-24 flex items-center justify-center mb-5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-100 dark:border-[#26324A]">
+              <div className="h-24 flex items-center justify-center mb-5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-100 dark:border-[#303030]">
                 <picture>
                   <source type="image/avif" srcSet={item.image.avif} />
                   <source type="image/webp" srcSet={item.image.webp} />

@@ -146,11 +146,11 @@ body {
 }
 
 html.dark #hero {
-  background-color: #0b1020;
+  background-color: #080808;
   background-image:
     radial-gradient(circle at 84% 16%, rgba(34, 211, 238, 0.19), transparent 25rem),
     radial-gradient(circle at 16% 94%, rgba(99, 102, 241, 0.16), transparent 31rem),
-    linear-gradient(135deg, #0b1020 0%, #10172a 56%, #0b1020 100%);
+    linear-gradient(135deg, #080808 0%, #101010 56%, #080808 100%);
 }
 
 html:not(.dark) [data-skill-card],
@@ -160,7 +160,7 @@ html:not(.dark) [data-experience-card] {
 
 html.dark [data-skill-card],
 html.dark [data-experience-card] {
-  background-image: linear-gradient(145deg, rgba(30, 41, 69, 0.96), rgba(21, 27, 46, 0.96));
+  background-image: linear-gradient(145deg, rgba(33, 33, 35, 0.96), rgba(15, 15, 16, 0.98));
   box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12), 0 18px 45px -32px rgba(0, 0, 0, 0.85);
 }
 
@@ -173,10 +173,10 @@ html.dark [data-experience-card]:hover {
    content surfaces remain dark/light enough for comfortable reading. */
 body {
   background:
-    radial-gradient(circle at 8% 18%, rgba(14, 165, 233, 0.34), transparent 28rem),
-    radial-gradient(circle at 92% 32%, rgba(124, 58, 237, 0.22), transparent 30rem),
-    radial-gradient(circle at 44% 92%, rgba(16, 185, 129, 0.18), transparent 26rem),
-    #dbeafe;
+    radial-gradient(circle at 8% 18%, rgba(14, 165, 233, 0.42), transparent 28rem),
+    radial-gradient(circle at 92% 32%, rgba(99, 102, 241, 0.30), transparent 30rem),
+    radial-gradient(circle at 44% 92%, rgba(16, 185, 129, 0.23), transparent 26rem),
+    #d8e7fb;
   background-attachment: fixed;
 }
 
@@ -185,7 +185,7 @@ html.dark body {
     radial-gradient(circle at 8% 18%, rgba(6, 182, 212, 0.30), transparent 30rem),
     radial-gradient(circle at 92% 32%, rgba(124, 58, 237, 0.30), transparent 30rem),
     radial-gradient(circle at 44% 92%, rgba(16, 185, 129, 0.17), transparent 27rem),
-    #050816;
+    #000000;
   background-attachment: fixed;
 }
 
@@ -218,32 +218,91 @@ html.dark .app-shell::before {
 
 .app-shell section:not(#hero),
 .app-shell footer {
-  background-color: rgba(248, 250, 252, 0.76) !important;
-  border-color: rgba(71, 85, 105, 0.24) !important;
+  background-color: rgba(240, 246, 255, 0.88) !important;
+  border-color: rgba(71, 85, 105, 0.34) !important;
   backdrop-filter: blur(18px) saturate(130%);
   -webkit-backdrop-filter: blur(18px) saturate(130%);
 }
 
 html.dark .app-shell section:not(#hero),
 html.dark .app-shell footer {
-  background-color: rgba(11, 16, 32, 0.78) !important;
+  background-color: rgba(8, 8, 8, 0.82) !important;
   border-color: rgba(103, 232, 249, 0.18) !important;
 }
 
 .app-shell section div.bg-white,
 .app-shell section div.bg-slate-50 {
-  background-color: rgba(255, 255, 255, 0.78) !important;
-  border-color: rgba(71, 85, 105, 0.25) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 18px 45px -30px rgba(15, 23, 42, 0.42) !important;
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(100, 116, 139, 0.44) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 20px 45px -30px rgba(15, 23, 42, 0.52) !important;
   backdrop-filter: blur(16px) saturate(145%);
   -webkit-backdrop-filter: blur(16px) saturate(145%);
 }
 
 html.dark .app-shell section div.bg-white,
 html.dark .app-shell section div.bg-slate-50 {
-  background-color: rgba(21, 27, 46, 0.82) !important;
+  background-color: rgba(20, 20, 21, 0.86) !important;
   border-color: rgba(125, 211, 252, 0.22) !important;
   box-shadow: inset 0 1px 0 rgba(226, 232, 240, 0.15), 0 20px 48px -32px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Light mode needs distinct editorial layers rather than a field of near-white. */
+html:not(.dark) #experience {
+  background-color: rgba(224, 238, 255, 0.93) !important;
+  background-image:
+    radial-gradient(circle at 88% 12%, rgba(79, 70, 229, 0.16), transparent 27rem),
+    radial-gradient(circle at 10% 84%, rgba(14, 165, 233, 0.18), transparent 25rem);
+}
+
+html:not(.dark) #experience [data-experience-card] {
+  background-image: linear-gradient(135deg, #ffffff 0%, #f8fbff 72%, #eef6ff 100%) !important;
+  border-color: rgba(71, 85, 105, 0.42) !important;
+  border-left: 4px solid #0891b2 !important;
+  box-shadow: 0 22px 46px -34px rgba(15, 23, 42, 0.56) !important;
+}
+
+html:not(.dark) #experience [data-experience-card]:hover {
+  border-color: #0284c7 !important;
+  box-shadow: 0 26px 52px -32px rgba(8, 145, 178, 0.38) !important;
+}
+
+html:not(.dark) #experience [data-experience-card] .text-slate-500,
+html:not(.dark) #experience [data-experience-card] .text-slate-600 {
+  color: #334e6f !important;
+}
+
+html:not(.dark) #experience [data-experience-card] a {
+  color: #0369a1;
+  font-weight: 600;
+}
+
+html.dark #experience {
+  background-color: rgba(5, 5, 6, 0.94) !important;
+  background-image:
+    radial-gradient(circle at 88% 12%, rgba(124, 58, 237, 0.22), transparent 28rem),
+    radial-gradient(circle at 10% 84%, rgba(6, 182, 212, 0.20), transparent 25rem);
+}
+
+html.dark #experience [data-experience-card] {
+  background-image: linear-gradient(135deg, #202024 0%, #141416 68%, #0d1619 100%) !important;
+  border-color: rgba(103, 232, 249, 0.30) !important;
+  border-left: 4px solid #22d3ee !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 24px 50px -34px rgba(0, 0, 0, 0.94) !important;
+}
+
+html.dark #experience [data-experience-card]:hover {
+  border-color: #22d3ee !important;
+  box-shadow: inset 0 1px 0 rgba(207, 250, 254, 0.15), 0 26px 58px -32px rgba(34, 211, 238, 0.28) !important;
+}
+
+html.dark #experience [data-experience-card] .text-slate-400,
+html.dark #experience [data-experience-card] .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+html.dark #experience [data-experience-card] a {
+  color: #67e8f9;
+  font-weight: 600;
 }
 
 .app-shell nav {
@@ -271,10 +330,19 @@ html.dark .app-shell nav {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border: 1px solid rgba(148, 163, 184, 0.38);
-  border-radius: 0.875rem;
+  border: 1px solid rgba(203, 213, 225, 0.82);
+  border-radius: 9999px;
   background: #ffffff !important;
-  box-shadow: 0 8px 22px -16px rgba(15, 23, 42, 0.60);
+  box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.68);
+}
+
+.logo-surface > img {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: 78%;
+  max-height: 78%;
+  object-fit: contain;
 }
 
 .profile-card {
@@ -284,7 +352,7 @@ html.dark .app-shell nav {
 }
 
 html.dark .profile-card {
-  background-image: linear-gradient(145deg, rgba(25, 38, 66, 0.96), rgba(14, 22, 43, 0.96)) !important;
+  background-image: linear-gradient(145deg, rgba(31, 31, 33, 0.96), rgba(12, 12, 13, 0.98)) !important;
   border-color: rgba(34, 211, 238, 0.34) !important;
   box-shadow: inset 0 1px 0 rgba(186, 230, 253, 0.15), 0 22px 48px -30px rgba(0, 0, 0, 0.9) !important;
 }
